@@ -58,8 +58,57 @@ The abstract should briefly summarize the contents of the paper in
 %
 %
 %
-\section{First Section}
-\subsection{A Subsection Sample}
+\subsection{Introduction}
+- Introduction: adversarial perturbations sind wichtig. 
+  Motivation: Vermeidung von Störbarkeit von Netzwerken
+	Mozavi dezfoli: es gibt effektive universal adversarial perturbations (auf einer Netzwerkarchitektur trainiert)
+	
+	Verweis auf noch unbekannte Arbeit
+	Fragestellung:
+		- Reprodution der Resultate von Mozavi Dezfoli
+		- Steigt die Transferierbarkeit von Störwerten, indem ein universal adv. pert verfahren benutzt wird, das mehrere Modelle/Netzwerke kombiniert. 
+		- Wir berichten über drei Kombinationsverfahren. und vergleichen diese mit den Resultaten der Originalverfahren.
+\subsection{Methods}
+- Beschreibung DeepFool
+- Beschreibung UAP-Verfahren: Wie werden adv. perturbations von DeepFool zu universal adv. pert. kombiniert
+- Beschreibung Kombinationsverfahren: Beschreibe Verfahren ohne modifiziertes DeepFool
+\subsection{Results}
+\subsubsection{Versuch der Reproduktion Mozavi dezfoli}
+		- Resultate Tabelle 7.3. vorstellen und diskutieren:
+			- Störwerte und gestörtes Netzwerk identisch 3\%-20\% schlechter als Mozavi
+			- gestörtes Netzwerk nicht identisch zum Netzwerk das Störung generiert hat: teilweise bis zu 10\% und 30\% schlechter. 
+		- Resultat: Reproduktion sieht qualitativ ähnlich aus. Abb 7.1.
+		- ausgeglichenes Datenset; 
+		- erwähne, dass Publikation unvollständig für Reproduktion: Defaultwerte von Parameter, welche nicht in publikation beschrieben; Parameterwerte von DeepFool nicht mehr angegeben.
+		- Versuch, verschiedene Parameter zu optimieren wurde versucht, brachte nur ca. 5\% Verbesserung
+\subsubsection{Kombinationsverfahren}
+- Tabelle	8.1 ohne Modifiziertes DeepFool
+- Diskussion Resultate Reproduktion des UAP-Verfahrens: 
+- Diskussion Resultate Kombinationsverfahren: kombiniere Inception und VGG, optimiere Störwerte
+Vergleiche mit störwerten, die direkt auf einem einzelnen Modell generiert werden. Vergleiche einerseits mit Störwerten der Einzelmodelle, andererseits mit Störwerten eines unabhängigen Modells (ResNet)
+
+\subsubsection{Discussion}
+- Einzelne Parameter konnten nicht gut optimiert werden wegen fehlender Rechenleistung
+\subsubsection{Conclusion and Outlook}
+Weitere Modellpaare kombinieren.
+
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Nunc sed augue lacus viverra vitae congue eu consequat. Pellentesque habitant morbi tristique senectus et. Tortor condimentum lacinia quis vel eros donec ac odio tempor. Nibh ipsum consequat nisl vel. Varius sit amet mattis vulputate enim. Ullamcorper eget nulla facilisi etiam dignissim. Sit amet est placerat in. Sed ullamcorper morbi tincidunt ornare massa eget egestas purus. Nibh nisl condimentum id venenatis a condimentum. Quisque sagittis purus sit amet volutpat consequat mauris nunc.
+
+Aliquet risus feugiat in ante metus dictum at. Molestie nunc non blandit massa. Dignissim sodales ut eu sem integer vitae justo. Magna ac placerat vestibulum lectus mauris ultrices eros. Dolor magna eget est lorem ipsum dolor sit amet consectetur. Tincidunt tortor aliquam nulla facilisi cras fermentum odio. Gravida rutrum quisque non tellus orci ac. In vitae turpis massa sed elementum tempus egestas sed. Sit amet luctus venenatis lectus magna fringilla urna. Nibh cras pulvinar mattis nunc sed blandit libero volutpat. Blandit cursus risus at ultrices mi tempus imperdiet nulla malesuada. Non tellus orci ac auctor augue mauris augue neque gravida. Commodo sed egestas egestas fringilla phasellus faucibus scelerisque eleifend. Vitae suscipit tellus mauris a diam.
+
+Pellentesque pulvinar pellentesque habitant morbi tristique senectus. Porttitor lacus luctus accumsan tortor posuere ac ut consequat semper. Velit egestas dui id ornare arcu odio ut sem nulla. Velit laoreet id donec ultrices tincidunt arcu non. Amet purus gravida quis blandit turpis. Malesuada fames ac turpis egestas. Pharetra convallis posuere morbi leo. Proin nibh nisl condimentum id venenatis. Diam vulputate ut pharetra sit amet. Nunc eget lorem dolor sed viverra ipsum nunc aliquet.
+
+Leo vel fringilla est ullamcorper. Integer vitae justo eget magna fermentum iaculis eu. Mi eget mauris pharetra et ultrices. Augue ut lectus arcu bibendum at. Cursus vitae congue mauris rhoncus aenean vel elit scelerisque mauris. Vulputate odio ut enim blandit volutpat maecenas volutpat. Nisi quis eleifend quam adipiscing vitae. Imperdiet dui accumsan sit amet nulla facilisi morbi tempus iaculis. Risus in hendrerit gravida rutrum. Tempus quam pellentesque nec nam aliquam sem. Praesent tristique magna sit amet. Quam viverra orci sagittis eu volutpat odio facilisis. Nunc faucibus a pellentesque sit amet porttitor.
+
+Amet mauris commodo quis imperdiet massa tincidunt nunc pulvinar sapien. Diam sollicitudin tempor id eu nisl nunc mi. Proin fermentum leo vel orci porta non pulvinar. Et molestie ac feugiat sed lectus vestibulum mattis ullamcorper velit. Tincidunt ornare massa eget egestas purus viverra accumsan. Amet est placerat in egestas erat imperdiet sed euismod. Turpis nunc eget lorem dolor. Volutpat sed cras ornare arcu dui vivamus. Turpis massa tincidunt dui ut ornare lectus sit. Etiam tempor orci eu lobortis elementum nibh. Dictumst vestibulum rhoncus est pellentesque elit. Duis at tellus at urna condimentum mattis pellentesque. Sollicitudin aliquam ultrices sagittis orci a scelerisque purus. Nec dui nunc mattis enim ut tellus elementum sagittis vitae. Vulputate mi sit amet mauris commodo quis imperdiet massa tincidunt.
+
+
+\section{Introduction}
+Moozavi-Dezfoli\cite{fawzi_robustness_2017}\\
+DeepFool: a simple and accurate method to fool deep neural:\cite{moosavi-dezfooli_deepfool_2016}\\
+Universal adversarial perturbations:\cite{moosavi-dezfooli_universal_2017}
+\subsection{Results}
 Please note that the first paragraph of a section or subsection is
 not indented. The first paragraph that follows a table, figure,
 equation etc. does not need an indent, either.
