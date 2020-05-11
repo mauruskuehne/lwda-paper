@@ -59,6 +59,21 @@ The abstract should briefly summarize the contents of the paper in
 %
 %
 \subsection{Introduction}
+The discovery of Szegedy et.al.~\cite{Szegedy_2014} that several machine learning models, including deep neural networks are vulnerable to \emph{adversarial attacks} was seminal for a new subfield of studying deep learning. Probably the most intriguing, but also unsettling result was that adversarial examples can be made quite imperceptible to the human eye, while still fooling a convolutional neural network to misclassify the image~\cite{goodfellow_2014}. Subsequent work has developed various attack algorithms in a variety of black-box, gray-box and white-box scenarios as well as defensive strategies such as adversarial training~\cite{REN2020346}. In particular Moosavi-Dezfooli et.al. have demonstrated~\cite{moosavi-dezfooli_universal_2017} that the perturbations can be \emph{universal}, i.e. that a single set of of pixel value changes can be found that fools a network on a large fraction of the training data set. Moreover, these \emph{universal perturbations} also fool other convolutional networks, albeit to a lesser but still very significant degree~{\bf cite universal adversarial attacks}. 
+Given these results it seems plausible that neural networks partly share a common structure that can be expoited by universal adversarial perturbations, while yet other aspects are different. In this context, we ask whether the transferability of universal adversarial perturbations to new convolutional neural networks is improved by combining two neural networks in the adversarial perturbation generation algorithm. We expect to see an increase in the transferability of an adversarial perturbation to new networks by combining two neural networks. Ultimately, we hope this approach could lead to identifying a general property resulting in convolutional neural networks being susceptible ({\bf sensitive?} to adversarial attacks.
+
+Given the practical potential and relevance of Deep Learning and the above potential security threats, finding a robust resolution is important and urgent. However, research into the topic is hampered by the \emph{reproducibility crisis} in machine learning~\cite{raff2020quantifying}. A lot of research results, including on adversarial attacks, remain poorly documented in publications. While the methods described may be general enough to be useful for many similar applications, 
+the published results may not be reproducible due to undocumented values for hyperparameters, software library versions etc.
+
+ev https://arxiv.org/vc/arxiv/papers/1909/1909.03032v1.pdf zitieren?
+
+Also, only in rare cases is it clear how well the published results generalize beyond the very specific data set that was used but not provided to produce the published results. 
+
+While not being able to reproduce the generation of adversarial examples may seem beneficial at first sight, it is clear that a thorough resolution of such security issues requires a well-stated problem including readily available state-of-the-art algorithms for the production of adversarial examples. They form the basis of being able to test deep learning systems against such attacks. 
+
+In this paper we report on an effort to reproduce results from~\cite{moosavi-dezfooli_universal_2017} {\bf und weiteren Artikeln, zitieren!} and provide our code. The authors there report good generalization results for universal adversarial perturbations across different deep learning architectures. We report on our reproduction effort and investigate whether modifications of DeepFool are able to improve the generalization capability of universal adversarial perturbations. Specifically, we ask whether adaptations in the universal adversarial example generation algorithm 
+towards incorporating information from a second neural network architecture improves the fooling rate of a third neural network. ({\bf Satz zu laaang!}). 
+
 - Introduction: adversarial perturbations sind wichtig. 
   Motivation: Vermeidung von Störbarkeit von Netzwerken
 	Mozavi dezfoli: es gibt effektive universal adversarial perturbations (auf einer Netzwerkarchitektur trainiert)
