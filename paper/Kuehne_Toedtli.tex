@@ -7,6 +7,8 @@
 \usepackage[utf8]{inputenc}
 \usepackage{graphicx}
 \usepackage[british]{babel}
+\usepackage{amsmath}
+\usepackage[linesnumbered]{algorithm2e}
 %\usepackage[backend=biber]{biblatex}
 %\usepackage[backend=biber,style=splncs04]{biblatex}  %backend=biber is 'better'  
 
@@ -22,7 +24,10 @@
 % BibTeX users should specify bibliography style 'splncs04'.
 % References will then be sorted and formatted in the correct style.
 %
+\DeclareMathOperator{\sgn}{sgn}
 
+
+\newcommand{\xn}{\ensuremath{\mathbf{x_0}}}
 \bibliographystyle{splncs04}
 \begin{document}
 %
@@ -58,21 +63,19 @@ The abstract should briefly summarize the contents of the paper in
 %
 %
 %
+
 \subsection{Introduction}
-The discovery of Szegedy et.al.~\cite{Szegedy_2014} that several machine learning models, including deep neural networks are vulnerable to \emph{adversarial attacks} was seminal for a new subfield of studying deep learning. Probably the most intriguing, but also unsettling result was that adversarial examples can be made quite imperceptible to the human eye, while still fooling a convolutional neural network to misclassify the image~\cite{goodfellow_2014}. Subsequent work has developed various attack algorithms in a variety of black-box, gray-box and white-box scenarios as well as defensive strategies such as adversarial training~\cite{REN2020346}. In particular Moosavi-Dezfooli et.al. have demonstrated~\cite{moosavi-dezfooli_universal_2017} that the perturbations can be \emph{universal}, i.e. that a single set of of pixel value changes can be found that fools a network on a large fraction of the training data set. Moreover, these \emph{universal perturbations} also fool other convolutional networks, albeit to a lesser but still very significant degree~{\bf cite universal adversarial attacks}. 
+The discovery of Szegedy et.al.~\cite{Szegedy_2014} that several machine learning models including deep neural networks are vulnerable to \emph{adversarial attacks} was seminal for a new subfield of studying deep learning. Probably the most intriguing, but also unsettling result was that adversarial examples can be made quite imperceptible to the human eye, while still fooling a convolutional neural network to misclassify the image~\cite{goodfellow_2014}. Subsequent work has developed various algorithms in a variety of black-box, gray-box and white-box attack scenarios as well as defensive strategies such as adversarial training~\cite{REN2020346}. In particular, Moosavi-Dezfooli et. al. have demonstrated~\cite{moosavi-dezfooli_universal_2017} that the perturbations can be \emph{universal}, i.e. that a single set of of pixel modification can be found that fools a network on a large fraction of the training data set. Moreover, these \emph{universal perturbations} also fool other convolutional networks, albeit to a lesser but still very significant degree~{\bf cite universal adversarial attacks}. 
+
 Given these results it seems plausible that neural networks partly share a common structure that can be expoited by universal adversarial perturbations, while yet other aspects are different. In this context, we ask whether the transferability of universal adversarial perturbations to new convolutional neural networks is improved by combining two neural networks in the adversarial perturbation generation algorithm. We expect to see an increase in the transferability of an adversarial perturbation to new networks by combining two neural networks. Ultimately, we hope this approach could lead to identifying a general property resulting in convolutional neural networks being susceptible ({\bf sensitive?} to adversarial attacks.
 
 Given the practical potential and relevance of Deep Learning and the above potential security threats, finding a robust resolution is important and urgent. However, research into the topic is hampered by the \emph{reproducibility crisis} in machine learning~\cite{raff2020quantifying}. A lot of research results, including on adversarial attacks, remain poorly documented in publications. While the methods described may be general enough to be useful for many similar applications, 
-the published results may not be reproducible due to undocumented values for hyperparameters, software library versions etc.
-
-ev https://arxiv.org/vc/arxiv/papers/1909/1909.03032v1.pdf zitieren?
-
+the published results are often difficult to reproduce due to undocumented values for hyperparameters, software library versions etc. {\bf ev. https://arxiv.org/vc/arxiv/papers/1909/1909.03032v1.pdf zitieren?}
 Also, only in rare cases is it clear how well the published results generalize beyond the very specific data set that was used but not provided to produce the published results. 
 
-While not being able to reproduce the generation of adversarial examples may seem beneficial at first sight, it is clear that a thorough resolution of such security issues requires a well-stated problem including readily available state-of-the-art algorithms for the production of adversarial examples. They form the basis of being able to test deep learning systems against such attacks. 
+While not being able to reproduce the generation of adversarial examples may seem beneficial at first sight, it is clear that a thorough resolution of such security issues requires a well-stated problem, including readily available state-of-the-art algorithms for the production of adversarial examples. They form the basis of being able to test deep learning systems against such attacks. 
 
-In this paper we report on an effort to reproduce results from~\cite{moosavi-dezfooli_universal_2017} {\bf und weiteren Artikeln, zitieren!} and provide our code. The authors there report good generalization results for universal adversarial perturbations across different deep learning architectures. We report on our reproduction effort and investigate whether modifications of DeepFool are able to improve the generalization capability of universal adversarial perturbations. Specifically, we ask whether adaptations in the universal adversarial example generation algorithm 
-towards incorporating information from a second neural network architecture improves the fooling rate of a third neural network. ({\bf Satz zu laaang!}). 
+In this paper we report on an effort to reproduce results from~\cite{moosavi-dezfooli_universal_2017} {\bf und weiteren Artikeln, zitieren!} and provide our code. The authors there show good generalization results for universal adversarial perturbations generated with their procedure \emph{DeepFool}\cite{DeepFool-Moosavi-Dezfooli15} across different deep learning architectures. We report on our reproduction effort and investigate whether modifications of DeepFool are able to improve the generalization capability of universal adversarial perturbations. Specifically, we ask whether incorporating information from a second neural network architecture improves the fooling rate of universal adversarial perturbations of a third neural network. We investigate three combination procedures and compare them with the original adversarial attack procedure.
 
 - Introduction: adversarial perturbations sind wichtig. 
   Motivation: Vermeidung von Störbarkeit von Netzwerken
@@ -84,6 +87,40 @@ towards incorporating information from a second neural network architecture impr
 		- Steigt die Transferierbarkeit von Störwerten, indem ein universal adv. pert verfahren benutzt wird, das mehrere Modelle/Netzwerke kombiniert. 
 		- Wir berichten über drei Kombinationsverfahren. und vergleichen diese mit den Resultaten der Originalverfahren.
 \subsection{Methods}
+\subsection{General Setting}
+Given a classifier $\hat{k}(x)=\sgn\left(f(x)\right)$ that is based on the sign of a classification function $f:\mathbf{R}^n\rightarrow\mathbf{R}$, adversarial attacks seek a perturbation $v$ such that \[\hat{k}(x+v)=\sgn\left(f(x+v)\right)\neq \sgn\left(f(x)\right)=\hat{k}(x).\] 
+Here, we assume a binary classification problem for simplicty.
+\subsection{DeepFool}
+In DeepFool, the perturbation $\mathbf{v}$ for an image $\xn$ is defined to be the shortest vector (using the $L_2$-norm $\left\|.\right\|$) such that $\xn+v$ lies on a decision boundary. If $f(x)$ were a linear function $f(x)=\mathbf{w} \mathbf{x}+\mathbf{b}$, then $\mathbf{v}$ can be shown to be $\mathbf{v}=-\frac{f(\xn)}{\left\|\mathbf{w}\right\|_2^2}\mathbf{w}$. As $f$ is nonlinear in general, the Taylor approximation $f(x)=f(\xn)+\left(\nabla f(\mathbf{x})\right)^T\mathbf{v}$ is used to iteratively reach the decision boundary. Perturbations computed at each step are added up and scaled back to satisfy a norm bound given by \(\left\|\mathbf{v}\right\|_2\leq\xi\) where \(\xi\) is a hyperparameter.
+For Details, see~\cite{DeepFool-Moosavi-Dezfooli15}.
+\subsection{Universal adversarial Perturbations with DeepFool}
+Algorithm~\ref{alg:1} shows the procedure to compute a universal adversarial perturbation for a classifier \(\hat{k}\) on a dataset \(X\).{\bf Weglassen, wenn zu wenig Platz}.
+Essentially, perturbations generated for each image using DeepFool are averaged to obtain a universal perturbation. Promising results such as those given in {\bf cite Moozavi or others} raise the question whether it is possible to find a perturbation that fools several neural networks. Algorithm~\ref{alg:2} is an approach of combining two perturbations that have been obtained by training them individually on a single network. We compare this with Algorithm~\ref{alg:3} representing a class of perturbation generating procedures that combine the gradients of several neural networks to construct a single perturbation iteratively. 
+
+
+
+\begin{algorithm}[H]\label{alg:1}
+
+\SetAlgoLined
+{\bf Input}:Data set \(X\), classifier \(\hat{k}\), desired norm \(\left\|.\right\|_p\) of
+the perturbation \(\xi\), desired accuracy on perturbed samples \(\delta\).\;
+{\bf Output}: Universal perturbation vector \(v\)\;
+Initialize \(v \gets 0\)\;%, epoch\gets 1\;\;
+
+\While{\(\mathrm{fooling~rate~too~low}\)}{
+\ForEach{\(\mathrm{datapoint}\) \(x\in X\) \(\mathrm{with}\) \(\hat{k}(x)\neq\hat{k}(x+v)\)}{ 
+	\(\Delta v\gets \underset{r}{\arg \min}\left\|r\right\|_2~\mathrm{s.t.}~\hat{k}(x+v+r)\neq\hat{k}(x)\)\;
+	\(v\gets v+\Delta v\)\;  
+	Rescale \(v\gets \sqrt{\xi}v/\left\|v\right\|_p\)
+}  
+ }
+ \caption{Computation of universal adversarial perturbations}
+\end{algorithm}
+
+
+
+\subsection{DeepFool and Universal Adversarial Perturbations}
+DeepFool~\cite{DeepFool-Moosavi-Dezfooli15} is an algorithm for constructing
 - Beschreibung DeepFool
 - Beschreibung UAP-Verfahren: Wie werden adv. perturbations von DeepFool zu universal adv. pert. kombiniert
 - Beschreibung Kombinationsverfahren: Beschreibe Verfahren ohne modifiziertes DeepFool
@@ -98,6 +135,26 @@ towards incorporating information from a second neural network architecture impr
 		- Versuch, verschiedene Parameter zu optimieren wurde versucht, brachte nur ca. 5\% Verbesserung
 \subsubsection{Kombinationsverfahren}
 - Tabelle	8.1 ohne Modifiziertes DeepFool
+\begin{table}[]
+\centering
+\caption{Vergleich der Störraten von einzelnen Störwerten und Kombinationsverfahren (Validation-Set, $l_\infty$, $\xi=10$). Es werden die besten gemessenen Ergebnisse aufgelistet.}
+\begin{tabular}{|l|l|l|l|l|l|}
+\hline
+
+											&	Inception	&	VGG-16		&	ResNet-152		\\ \hline
+Inception-Störwert							&	$81.9\%$		&	$15.9\%$	&	$15.9\%$		\\
+VGG-16-Störwert								&	$59.9\%$		&	$58.7\%$	&	$38.0\%$		\\
+ResNet-152-Störwert							&	$54.6\%$		&	$31.4\%$	&	$73.4\%$		\\ \hline
+lin. Interpolation ($45\% \overline{PQ}$)	&	$46.2\%$		&	$23.7\%$	&	$16.7\%$		\\
+Finetuning									&	$59.9\%$		&	$57.9\%$	&	$38.6\%$		\\
+abwechselndes Generieren						&	$67.3\%$		&	$60.6\%$	&	$41.2\%$		\\
+modifiziertes DeepFool						&	$43.6\%$		&	$18.4\%$	&	$14.1\%$		\\
+
+
+\hline 
+\end{tabular}
+\label{tbl_vergleich_comb}
+\end{table}
 - Diskussion Resultate Reproduktion des UAP-Verfahrens: 
 - Diskussion Resultate Kombinationsverfahren: kombiniere Inception und VGG, optimiere Störwerte
 Vergleiche mit störwerten, die direkt auf einem einzelnen Modell generiert werden. Vergleiche einerseits mit Störwerten der Einzelmodelle, andererseits mit Störwerten eines unabhängigen Modells (ResNet)
