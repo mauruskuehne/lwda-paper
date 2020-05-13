@@ -32,6 +32,8 @@
 
 \newcommand{\xn}{\ensuremath{\mathbf{x_0}}}
 \newcommand{\rb}{\ensuremath{\mathbf{r}}}
+\newcommand{\kf}{\ensuremath{k_{\!f}}}
+\newcommand{\kg}{\ensuremath{k_{\!g}}}
 \bibliographystyle{splncs04}
 \begin{document}
 %
@@ -121,23 +123,15 @@ $\mathbf{r}_i \gets {\frac{\vert f'_{\hat{l}} \vert}{\Vert \mathbf{w'_{\hat{l}}}
 \end{figure}
 
 \subsection{Universal adversarial Perturbations with DeepFool}
-Perturbations generated for each image using DeepFool can be combined to form UAP using Alg.~\ref{alg:2}. To obtain a single UAP for a dataset, DeepFool perturbations of images are added to obtain a universal perturbation (For details, see~\cite{moosavi-dezfooli_universal_2017}). Adding up the perturbations is not commutative, since projections take place once the size (norm) of the perturbation becomes too big {\bf Überprüfen in Algo!}. 
-%Intriguingly, although the directions to the class boundaries vary for the training images, the resulting average over all image perturbations does work well, even for other convolutional neural networks. {\bf ALGO Alg.~\ref{alg:2} Hier listen?}
+Perturbations generated for each image using DeepFool can be combined to form UAP using Alg.~\ref{alg:2}. To obtain a single UAP for a dataset, DeepFool perturbations of images are added to obtain a universal perturbation (For details, see~\cite{moosavi-dezfooli_universal_2017}). 
 
-Our main attempt of modifying Alg.~\ref{alg:2} such that it incorporates the weaknesses of several neural networks is to hope for an improvement by incorporating the perturbations obtained for each network individually. In a first attempt, one could simply add up the perturbations stemming from two neural networks. As noted above, because of the norm-projection, this is different from our second attempt (given in Alg.~\ref{alg:3}, in which perturbations for the two networks are added up before projecting onto the norm constraint.
-
-the same universality across different network architectures.
-These class boundaries are different
-However, when combining several  of identifying the closest class boundary for a given data point. The main cha
-
-We compare this with Algorithm~\ref{alg:3} representing a class of perturbation generating procedures that combine the gradients of several neural networks to construct a single perturbation iteratively. \\
-
+\begin{figure}
 \begin{algorithm}[H]\label{alg:2}
 
 \SetAlgoLined
 {\bf Input}:Data set \(X\), classifier \(\hat{k}\), desired norm \(\left\|.\right\|_p\) of
 the perturbation \(\xi\), desired accuracy on perturbed samples \(\delta\).\;
-{\bf Output}: Universal perturbation vector \(v\)\;
+{\bf Output}: Universal perturbation vector \(\rb\)\;
 Initialize \(v \gets 0\)\;%, epoch\gets 1\;\;
 
 \While{\textup {Average fooling rate is too low}}{
@@ -147,11 +141,40 @@ Initialize \(v \gets 0\)\;%, epoch\gets 1\;\;
 	\(\rb\gets \sqrt{\xi}\rb/\left\|\rb\right\|_p\)
 }  
  }
+\Return \rb
  \caption{Computation of universal adversarial perturbations}
 \end{algorithm}
+\end{figure}
 
 \begin{figure}
 \begin{algorithm}[H]\label{alg:3}
+
+\SetAlgoLined
+{\bf Input}:Data set \(X\), classifiers \(\hat{k_i}\in K,i=1\ldots n\), desired norm \(\left\|.\right\|_p\) of
+the perturbation \(\xi\).\;
+{\bf Output}: Universal perturbation vector \(v\)\;
+Initialize \(\rb_k \gets 0\)\;%, epoch\gets 1\;\;
+
+\While{\textup {Average fooling rate is too low}}{
+\ForEach{\(\mathrm{classifier}\) \(k\in K\) }{ 
+	\(\Delta \mathbf{r}_k\gets\mathrm{DeepFool} (k)\)\;
+} 
+\(\rb =\frac{1}{n}\sum_{k=1}^n \Delta  \mathbf{r}_k\)\;
+\(\rb\gets \sqrt{\xi}\rb/\left\|\rb\right\|_p\) \;
+ }
+ \caption{Computation of universal adversarial perturbations for multiple neural networks}
+\end{algorithm}
+\end{figure}
+
+Adding up the perturbations is not commutative, since projections take place once the size (norm) of the perturbation becomes too big {\bf Überprüfen in Algo!}. 
+%Intriguingly, although the directions to the class boundaries vary for the training images, the resulting average over all image perturbations does work well, even for other convolutional neural networks. {\bf ALGO Alg.~\ref{alg:2} Hier listen?}
+Our main attempt of modifying Alg.~\ref{alg:2} such that it incorporates the weaknesses of several neural networks is to hope for an improvement by incorporating the perturbations obtained for each network individually. In a first attempt, one could simply add up the perturbations stemming from two neural networks, see Alg.~\ref{alg:3}. As noted above, because of the norm-projection, this is different from our second attempt (given in Alg.~\ref{alg:4}), in which perturbations for the two networks are added up before projecting onto the norm constraint. Lines 14 and 15 in Alg.~\ref{alg:4} carry the main idea: We seek the perturbation which points in the averaged direction of the two single-network perturbations, with a strength proportional to the sums of the of the (absolute)  changes in activation when compared to the unperturbed image. {\bf seehr shaky!!! Besser motivieren!!}
+{\bf After that, again the norm constraint is enforced Tun wir das wirklich???????}.
+
+Finally, it seems reasonable to compare these rather involved perturbation constructions with a simple weighted average of the perturbation vectors generated on the individual networks. Given UAPs \(\mathbf{r}_f\) and \(\mathbf{r}_g\) of two neural networks $f$ and $g$, we may simply consider \[\mathbf{r}_{fg}\left(\lambda\right)=\lambda\,\mathbf{r}_f+\left(1-\lambda\right)\mathbf{r}_g\]	
+
+\begin{figure}
+\begin{algorithm}[H]\label{alg:4}
 \SetAlgoLined
 %\KwResult{Write here the result }
 {\bf Input}:image \(\mathbf{x}\), classifier \(f\), maximal number of iterations \(i_{\text{max}}\)\;
@@ -160,16 +183,17 @@ Initialize \(\mathbf{x_0} \gets \mathbf{x}\)\;
  \While{\(\hat{k}(\mathbf{x_i}) = \hat{k}(\mathbf{x_0})\) {\bf and} \( i \leq i_\text{max}\)}{
 \ForEach{\(\mathrm{datapoint}\) \(\mathbf{x_0}\in X\) \(\mathrm{with}\) \(\hat{k}(\mathbf{x_0})\neq\hat{k}(\mathbf{x_0}+v)\)}{
 \For { $k \neq \hat{k}_f(\mathbf{x_0})$ } {
-	 ${\mathbf{w'}_k} \gets \nabla f_k(\mathbf{x}) - \nabla f_{\hat{k}(\mathbf{x_0})}(\mathbf{x}) $\;
+	 ${\mathbf{w}_k'} \gets \nabla f_k(\mathbf{x}) - \nabla f_{\hat{k}(\mathbf{x_0})}(\mathbf{x}) $\;
 $f'_k \gets f_k(\mathbf{x}) - f_{\hat{k}(\mathbf{x_0})}(\mathbf{x}) $
 }
 \For { $k \neq \hat{k_g}(\mathbf{x_0})$ } {
-	 ${\mathbf{u'}_k} \gets \nabla g_k(\mathbf{x}) - \nabla g_{\hat{k}(\mathbf{x_0})}(\mathbf{x}) $\;
-$f'_k \gets g_k(\mathbf{x}) - g_{\hat{k}(\mathbf{x_0})}(\mathbf{x}) $
+	 ${\mathbf{u}_k'} \gets \nabla g_k(\mathbf{x}) - \nabla g_{\hat{k}(\mathbf{x_0})}(\mathbf{x}) $\;
+$g'_k \gets g_k(\mathbf{x}) - g_{\hat{k}(\mathbf{x_0})}(\mathbf{x}) $
 }
-$\hat{l} \gets \arg \min_{k \neq \hat{k}(\mathbf{x_0})} \frac{ \vert f'_k \vert}{\Vert \mathbf{w'}_k \Vert_2}  $
+$\hat{l}_f,\hat{l}_g \gets \arg \min_{\kf \neq \hat{k}_f(\mathbf{x_0}) \& \kg \neq \hat{k}_g(\mathbf{x_0}) } 
+\frac{ \left|f_{\kf}' \right|+\left| g_{\kg}'\right|}{\left\|\mathbf{w}_{\kf}'+\mathbf{u}_{\kg}' \right\|_2}  $
 
-$\mathbf{r}_i \gets {\frac{\vert f'_{\hat{l}} \vert}{\Vert \mathbf{w'_{\hat{l}}} \Vert^2_2}} \mathbf{w'_{\hat{l}}} $
+$\mathbf{r}_i \gets \frac{\bigl|f_{\hat{l}_{\!f}}' \bigr|+\left| g_{\hat{l}_{g}}'\right|}{\bigl\|\mathbf{w}_{\hat{l}_{\!f}}'+\mathbf{u}_{\hat{l}_g}' \bigr\|_2} \left(\mathbf{w}_{\hat{l}_{\!f}}'+\mathbf{u}_{\hat{l}_g}'\right) $
 {\bf	Rescale ???????}\(v\gets \sqrt{\xi}v/\left\|v\right\|_p\)
 
 \(\mathbf{x} \gets \mathbf{x} + \mathbf{r}_i\)\;
