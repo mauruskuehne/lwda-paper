@@ -210,7 +210,41 @@ DeepFool~\cite{DeepFool-Moosavi-Dezfooli15} is an algorithm for constructing
 - Beschreibung DeepFool
 - Beschreibung UAP-Verfahren: Wie werden adv. perturbations von DeepFool zu universal adv. pert. kombiniert
 - Beschreibung Kombinationsverfahren: Beschreibe Verfahren ohne modifiziertes DeepFool
-\subsection{Results}
+\section{Results}
+
+\subsection{Reproduction}
+
+The DeepFool and Universal Adversarial Perturbations algorithms have been tested on 5 different neural networks. We chose similar networks as used in {\bf UAP zitieren} to be able to compare the achieved fooling rates with the original paper. All perturbations were generated using a random subset of 10'000 images of the ImageNet training set {\bf ImageNet zitieren}. The fooling rates were measured on the ImageNet validation set (containing 50'000 images).
+
+Table \ref{tbl_stoerraten_reprod_kreuz_linf} shows the achieved fooling rates for the tested models. The main diagonal contains the fooling rates we achieved when using the same model for generating the perturbation and measuring the fooling rate. For most models we could not achieve the same fooling rates as reported in the original paper. For VGG-F, VGG-16, VGG-19 and ResNet-152 our absolute fooling rates were between 4.1\% and 23.5\% lower. For Inception we achieved a 3\% higher fooling rate than reported in the original paper.
+
+\begin{table}[]
+\centering
+\caption{Fooling rates for the ImageNet validation set. The rows show the model that was used to generate the perturbations. The columns show which model was used to measure the fooling rate. ($l_\infty$, $\xi=10$)}
+\begin{tabular}{|l|l|l|l|l|l|}
+\hline
+
+			& VGG-F		&	Inception	&	VGG-16		&	VGG-19		&	ResNet-152	\\ \hline
+VGG-F		& $89.6\%$	&	$56.5\%$		&	$32.4\%$		&	$32.2\%$		& 	$24.4\%$		\\
+Inception	& $25.1\%$	&	$81.9\%$		&	$15.9\%$		&	$15.8\%$		& 	$15.6\%$	\\
+VGG-16		& $46.2\%$	&	$59.9\%$		&	$58.7\%$		&	$51.9\%$		& 	$38.0\%$	\\
+VGG-19		& $45.1\%$	&	$57.5\%$		&	$50.6\%$		&	$54.3\%$		& 	$33.4\%$	\\
+ResNet-152	& $42.4\%$	&	$54.6\%$		&	$31.4\%$		&	$30.1\%$		& 	$73.4\%$	\\
+\hline 
+\end{tabular}
+\label{tbl_stoerraten_reprod_kreuz_linf}
+\end{table}
+
+the other values in table \ref{tbl_stoerraten_reprod_kreuz_linf} show the transferability of perturbations to different models. In most cases, our fooling rates were 
+	
+%\begin{figure}
+%\includegraphics[width=0.05\textwidth]{./images/own_perturbations.png}
+%\caption{Visualisation of the generated perturbations. To visualise the perturbations we shifted them by $+\xi$ and extended them to the entire color space with a scalar multiplication. }
+%\label{fig_stoerwerte}
+%\end{figure}
+
+
+
 \subsubsection{Versuch der Reproduktion Mozavi dezfoli}
 		- Resultate Tabelle 7.3. vorstellen und diskutieren:
 			- Störwerte und gestörtes Netzwerk identisch 3\%-20\% schlechter als Mozavi
