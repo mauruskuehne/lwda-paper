@@ -31,6 +31,7 @@
 
 
 \newcommand{\xn}{\ensuremath{\mathbf{x_0}}}
+\newcommand{\xb}{\ensuremath{\mathbf{x}}}
 \newcommand{\rb}{\ensuremath{\mathbf{r}}}
 \newcommand{\kf}{\ensuremath{k_{\!f}}}
 \newcommand{\kg}{\ensuremath{k_{\!g}}}
@@ -95,74 +96,45 @@ In the multi-class setting considered here, there is an additional step of ident
 
 Perturbations computed at each step are added up and scaled back to satisfy a norm bound given by \(\left\|\mathbf{v}\right\|_2\leq\xi\) where \(\xi\) is a hyperparameter.{\bf stimmt das??} For Details, see~\cite{DeepFool-Moosavi-Dezfooli15}. \\
 
-\begin{figure}
-\begin{algorithm}[H]\label{alg:1}
-\SetAlgoLined
-%\KwResult{Write here the result }
-{\bf Input}:image \(\mathbf{x}\), classifier \(f\) with class logits \(f_k\), maximal number of iterations \(i_{\text{max}}\)\;
-{\bf Output}: Universal perturbation vector \(\mathbf{\hat{r}}\)\;
-Initialize \(\mathbf{x_0} \gets \mathbf{x}\)\;
- \While{\(\hat{k}(\mathbf{x_i}) = \hat{k}(\mathbf{x_0})\) }{
-\For { \( i =0\ldots i_\text{max}\)}{
 
-\For { $k \neq \hat{k}(\mathbf{x_0})$ } {
-	 ${\mathbf{w'}_k} \gets \nabla f_k(\mathbf{x}) - \nabla f_{\hat{k}(\mathbf{x_0})}(\mathbf{x}) $\;
-$f'_k \gets f_k(\mathbf{x}) - f_{\hat{k}(\mathbf{x_0})}(\mathbf{x}) $
-}
-$\hat{l} \gets \arg \min_{k \neq \hat{k}(\mathbf{x_0})} \frac{ \vert f'_k \vert}{\Vert \mathbf{w'}_k \Vert_2}  $
+\subsection{Multi-Classifier-Universal adversarial Perturbations with DeepFool}
 
-$\mathbf{r}_i \gets {\frac{\vert f'_{\hat{l}} \vert}{\Vert \mathbf{w'_{\hat{l}}} \Vert^2_2}} \mathbf{w'_{\hat{l}}} $
-{\bf	Rescale ???????}\(v\gets \sqrt{\xi}v/\left\|v\right\|_p\)
+\begin{itemize}
+\item Interpolation between UAP on individual networks
+Finally, it seems reasonable to compare these rather involved perturbation constructions with a simple weighted average of the perturbation vectors generated on the individual networks. Given UAPs \(\mathbf{r}_f\) and \(\mathbf{r}_g\) of two neural networks $f$ and $g$, we may simply consider \[\mathbf{r}_{fg}\left(\lambda\right)=\lambda\,\mathbf{r}_f+\left(1-\lambda\right)\mathbf{r}_g\]	
 
-\(\mathbf{x} \gets \mathbf{x} + \mathbf{r}_i\)\;
-}
-}
-\Return \(\mathbf{\hat{r}}=(1+\eta)\sum_i \mathbf{r}_i\)
- \caption{Multiclass DeepFool}
-\end{algorithm}
-\end{figure}
+\item Alternated generation of perturbations. Alg\ref{alg:3}
+\end{itemize}
 
-\subsection{Universal adversarial Perturbations with DeepFool}
 Perturbations generated for each image using DeepFool can be combined to form UAP using Alg.~\ref{alg:2}. To obtain a single UAP for a dataset, DeepFool perturbations of images are added to obtain a universal perturbation (For details, see~\cite{moosavi-dezfooli_universal_2017}). 
 
-\begin{figure}
-\begin{algorithm}[H]\label{alg:2}
 
-\SetAlgoLined
-{\bf Input}:Data set \(X\), classifier \(\hat{k}\), desired norm \(\left\|.\right\|_p\) of
-the perturbation \(\xi\), desired accuracy on perturbed samples \(\delta\).\;
-{\bf Output}: Universal perturbation vector \(\rb\)\;
-Initialize \(v \gets 0\)\;%, epoch\gets 1\;\;
+\subsection{}
 
-\While{\textup {Average fooling rate is too low}}{
-\ForEach{\(\mathrm{datapoint}\) \(x\in X\) \(\mathrm{with}\) \(\hat{k}(x)=\hat{k}(x+v)\)}{ 
-	\(\Delta \rb\gets \underset{r}{\arg \min}\left\|r\right\|_2~\mathrm{s.t.}~\hat{k}(\mathbf{x}+\rb+\Delta\rb)\neq\hat{k}(\mathbf{x})\)\;
-	\(\rb\gets \rb+\Delta \rb\)\;  
-	\(\rb\gets \sqrt{\xi}\rb/\left\|\rb\right\|_p\)
-}  
- }
-\Return \rb
- \caption{Computation of universal adversarial perturbations}
-\end{algorithm}
-\end{figure}
 
 \begin{figure}
 \begin{algorithm}[H]\label{alg:3}
 
 \SetAlgoLined
-{\bf Input}:Data set \(X\), classifiers \(\hat{k_i}\in K,i=1\ldots n\), desired norm \(\left\|.\right\|_p\) of
+{\bf Input}:Data set \(X\), a set of classifiers \(K\), desired norm \(\left\|.\right\|_p\) of
 the perturbation \(\xi\).\;
-{\bf Output}: Universal perturbation vector \(v\)\;
-Initialize \(\rb_k \gets 0\)\;%, epoch\gets 1\;\;
+{\bf Output}: Universal perturbation vector \(\rb\)\;
+Initialize \(\rb \gets 0\)\;%, epoch\gets 1\;\;
 
 \While{\textup {Average fooling rate is too low}}{
-\ForEach{\(\mathrm{classifier}\) \(k\in K\) }{ 
-	\(\Delta \mathbf{r}_k\gets\mathrm{DeepFool} (k)\)\;
+\ForEach{\(\mathrm{image~}\xb\in X\)  }{ 
+\ForEach{\(\hat{k}\in K\)  }{ 
+	%\(\Delta \mathbf{r}_k\gets\mathrm{UAP} (k)\)\;
+	\If{ \(\mathrm{with}\) \(\hat{k}(\xb)=\hat{k}(\xb+\rb)\)}{
+	%\(\Delta \rb\gets \underset{r}{\arg \min}\left\|r\right\|_2~\mathrm{s.t.}~\hat{k}(\mathbf{x}+\rb+\Delta\rb)\neq\hat{k}(\mathbf{x})\)\;
+		\(\Delta \rb\gets\mathrm{DeepFool} (\xb+\rb,\hat{k})\)\;
+	\(\rb\gets \rb+\Delta \rb\)\;  
+	\(\rb\gets \sqrt{\xi}\rb/\left\|\rb\right\|_p\)
+}  }
 } 
-\(\rb =\frac{1}{n}\sum_{k=1}^n \Delta  \mathbf{r}_k\)\;
-\(\rb\gets \sqrt{\xi}\rb/\left\|\rb\right\|_p\) \;
  }
- \caption{Computation of universal adversarial perturbations for multiple neural networks}
+\Return \rb
+ \caption{Computation of universal adversarial perturbations for multiple neural networks. }
 \end{algorithm}
 \end{figure}
 
@@ -171,39 +143,6 @@ Adding up the perturbations is not commutative, since projections take place onc
 Our main attempt of modifying Alg.~\ref{alg:2} such that it incorporates the weaknesses of several neural networks is to hope for an improvement by incorporating the perturbations obtained for each network individually. In a first attempt, one could simply add up the perturbations stemming from two neural networks, see Alg.~\ref{alg:3}. As noted above, because of the norm-projection, this is different from our second attempt (given in Alg.~\ref{alg:4}), in which perturbations for the two networks are added up before projecting onto the norm constraint. Lines 14 and 15 in Alg.~\ref{alg:4} carry the main idea: We seek the perturbation which points in the averaged direction of the two single-network perturbations, with a strength proportional to the sums of the of the (absolute)  changes in activation when compared to the unperturbed image. {\bf seehr shaky!!! Besser motivieren!!}
 {\bf After that, again the norm constraint is enforced Tun wir das wirklich???????}.
 
-Finally, it seems reasonable to compare these rather involved perturbation constructions with a simple weighted average of the perturbation vectors generated on the individual networks. Given UAPs \(\mathbf{r}_f\) and \(\mathbf{r}_g\) of two neural networks $f$ and $g$, we may simply consider \[\mathbf{r}_{fg}\left(\lambda\right)=\lambda\,\mathbf{r}_f+\left(1-\lambda\right)\mathbf{r}_g\]	
-
-\begin{figure}
-\begin{algorithm}[H]\label{alg:4}
-\SetAlgoLined
-%\KwResult{Write here the result }
-{\bf Input}:image \(\mathbf{x}\), classifier \(f\), maximal number of iterations \(i_{\text{max}}\)\;
-{\bf Output}: Universal perturbation vector \(\mathbf{\hat{r}}\)\;
-Initialize \(\mathbf{x_0} \gets \mathbf{x}\)\;
- \While{\(\hat{k}(\mathbf{x_i}) = \hat{k}(\mathbf{x_0})\) {\bf and} \( i \leq i_\text{max}\)}{
-\ForEach{\(\mathrm{datapoint}\) \(\mathbf{x_0}\in X\) \(\mathrm{with}\) \(\hat{k}(\mathbf{x_0})\neq\hat{k}(\mathbf{x_0}+v)\)}{
-\For { $k \neq \hat{k}_f(\mathbf{x_0})$ } {
-	 ${\mathbf{w}_k'} \gets \nabla f_k(\mathbf{x}) - \nabla f_{\hat{k}(\mathbf{x_0})}(\mathbf{x}) $\;
-$f'_k \gets f_k(\mathbf{x}) - f_{\hat{k}(\mathbf{x_0})}(\mathbf{x}) $
-}
-\For { $k \neq \hat{k_g}(\mathbf{x_0})$ } {
-	 ${\mathbf{u}_k'} \gets \nabla g_k(\mathbf{x}) - \nabla g_{\hat{k}(\mathbf{x_0})}(\mathbf{x}) $\;
-$g'_k \gets g_k(\mathbf{x}) - g_{\hat{k}(\mathbf{x_0})}(\mathbf{x}) $
-}
-$\hat{l}_f,\hat{l}_g \gets \arg \min_{\kf \neq \hat{k}_f(\mathbf{x_0}) \& \kg \neq \hat{k}_g(\mathbf{x_0}) } 
-\frac{ \left|f_{\kf}' \right|+\left| g_{\kg}'\right|}{\left\|\mathbf{w}_{\kf}'+\mathbf{u}_{\kg}' \right\|_2}  $
-
-$\mathbf{r}_i \gets \frac{\bigl|f_{\hat{l}_{\!f}}' \bigr|+\left| g_{\hat{l}_{g}}'\right|}{\bigl\|\mathbf{w}_{\hat{l}_{\!f}}'+\mathbf{u}_{\hat{l}_g}' \bigr\|_2} \left(\mathbf{w}_{\hat{l}_{\!f}}'+\mathbf{u}_{\hat{l}_g}'\right) $
-{\bf	Rescale ???????}\(v\gets \sqrt{\xi}v/\left\|v\right\|_p\)
-
-\(\mathbf{x} \gets \mathbf{x} + \mathbf{r}_i\)\;
-\(i \gets i + 1\)\;
-}
-}
-\Return \(\hat{r}=(1+\eta)\sum_i \mathbf{r}_i\)
- \caption{modified UAP-Generation}
-\end{algorithm}
-\end{figure}
 
 \subsection{DeepFool and Universal Adversarial Perturbations}
 DeepFool~\cite{DeepFool-Moosavi-Dezfooli15} is an algorithm for constructing
@@ -235,14 +174,14 @@ ResNet-152	& $42.4\%$	&	$54.6\%$		&	$31.4\%$		&	$30.1\%$		& 	$73.4\%$	\\
 \label{tbl_stoerraten_reprod_kreuz_linf}
 \end{table}
 
-the other values in table \ref{tbl_stoerraten_reprod_kreuz_linf} show the transferability of perturbations to different models. In most cases, our fooling rates were 
-	
-%\begin{figure}
-%\includegraphics[width=0.05\textwidth]{./images/own_perturbations.png}
-%\caption{Visualisation of the generated perturbations. To visualise the perturbations we shifted them by $+\xi$ and extended them to the entire color space with a scalar multiplication. }
-%\label{fig_stoerwerte}
-%\end{figure}
-
+the other values in table \ref{tbl_stoerraten_reprod_kreuz_linf} show the transferability of perturbations to different models. In most cases, our fooling rates were
+ 
+\begin{figure}[h]
+	\centering
+		\includegraphics[width=1.00\textwidth]{images/own_perturbations.png}
+	\caption{Visualisation of the generated perturbations. To visualise the perturbations we shifted them by $+\xi$ and extended them to the entire color space with a scalar multiplication. }
+	\label{fig_stoerwerte}
+\end{figure}
 
 
 \subsubsection{Versuch der Reproduktion Mozavi dezfoli}
@@ -283,17 +222,6 @@ Vergleiche mit störwerten, die direkt auf einem einzelnen Modell generiert werd
 - Einzelne Parameter konnten nicht gut optimiert werden wegen fehlender Rechenleistung
 \subsubsection{Conclusion and Outlook}
 Weitere Modellpaare kombinieren.
-
-
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Nunc sed augue lacus viverra vitae congue eu consequat. Pellentesque habitant morbi tristique senectus et. Tortor condimentum lacinia quis vel eros donec ac odio tempor. Nibh ipsum consequat nisl vel. Varius sit amet mattis vulputate enim. Ullamcorper eget nulla facilisi etiam dignissim. Sit amet est placerat in. Sed ullamcorper morbi tincidunt ornare massa eget egestas purus. Nibh nisl condimentum id venenatis a condimentum. Quisque sagittis purus sit amet volutpat consequat mauris nunc.
-
-Aliquet risus feugiat in ante metus dictum at. Molestie nunc non blandit massa. Dignissim sodales ut eu sem integer vitae justo. Magna ac placerat vestibulum lectus mauris ultrices eros. Dolor magna eget est lorem ipsum dolor sit amet consectetur. Tincidunt tortor aliquam nulla facilisi cras fermentum odio. Gravida rutrum quisque non tellus orci ac. In vitae turpis massa sed elementum tempus egestas sed. Sit amet luctus venenatis lectus magna fringilla urna. Nibh cras pulvinar mattis nunc sed blandit libero volutpat. Blandit cursus risus at ultrices mi tempus imperdiet nulla malesuada. Non tellus orci ac auctor augue mauris augue neque gravida. Commodo sed egestas egestas fringilla phasellus faucibus scelerisque eleifend. Vitae suscipit tellus mauris a diam.
-
-Pellentesque pulvinar pellentesque habitant morbi tristique senectus. Porttitor lacus luctus accumsan tortor posuere ac ut consequat semper. Velit egestas dui id ornare arcu odio ut sem nulla. Velit laoreet id donec ultrices tincidunt arcu non. Amet purus gravida quis blandit turpis. Malesuada fames ac turpis egestas. Pharetra convallis posuere morbi leo. Proin nibh nisl condimentum id venenatis. Diam vulputate ut pharetra sit amet. Nunc eget lorem dolor sed viverra ipsum nunc aliquet.
-
-Leo vel fringilla est ullamcorper. Integer vitae justo eget magna fermentum iaculis eu. Mi eget mauris pharetra et ultrices. Augue ut lectus arcu bibendum at. Cursus vitae congue mauris rhoncus aenean vel elit scelerisque mauris. Vulputate odio ut enim blandit volutpat maecenas volutpat. Nisi quis eleifend quam adipiscing vitae. Imperdiet dui accumsan sit amet nulla facilisi morbi tempus iaculis. Risus in hendrerit gravida rutrum. Tempus quam pellentesque nec nam aliquam sem. Praesent tristique magna sit amet. Quam viverra orci sagittis eu volutpat odio facilisis. Nunc faucibus a pellentesque sit amet porttitor.
-
-Amet mauris commodo quis imperdiet massa tincidunt nunc pulvinar sapien. Diam sollicitudin tempor id eu nisl nunc mi. Proin fermentum leo vel orci porta non pulvinar. Et molestie ac feugiat sed lectus vestibulum mattis ullamcorper velit. Tincidunt ornare massa eget egestas purus viverra accumsan. Amet est placerat in egestas erat imperdiet sed euismod. Turpis nunc eget lorem dolor. Volutpat sed cras ornare arcu dui vivamus. Turpis massa tincidunt dui ut ornare lectus sit. Etiam tempor orci eu lobortis elementum nibh. Dictumst vestibulum rhoncus est pellentesque elit. Duis at tellus at urna condimentum mattis pellentesque. Sollicitudin aliquam ultrices sagittis orci a scelerisque purus. Nec dui nunc mattis enim ut tellus elementum sagittis vitae. Vulputate mi sit amet mauris commodo quis imperdiet massa tincidunt.
 
 
 \section{Introduction}
@@ -356,3 +284,86 @@ We report on an effort to reproduce results from and provide our code.
 		- Reprodution der Resultate von Mozavi Dezfoli
 		- Steigt die Transferierbarkeit von Störwerten, indem ein universal adv. pert verfahren benutzt wird, das mehrere Modelle/Netzwerke kombiniert. 
 		- Wir berichten über drei Kombinationsverfahren. und vergleichen diese mit den Resultaten der Originalverfahren.
+		
+		
+\begin{figure}
+\begin{algorithm}[H]\label{alg:1}
+\SetAlgoLined
+%\KwResult{Write here the result }
+{\bf Input}:image \(\mathbf{x}\), classifier \(f\) with class logits \(f_k\), maximal number of iterations \(i_{\text{max}}\)\;
+{\bf Output}: Universal perturbation vector \(\mathbf{\hat{r}}\)\;
+Initialize \(\mathbf{x_0} \gets \mathbf{x}\)\;
+ \While{\(\hat{k}(\mathbf{x_i}) = \hat{k}(\mathbf{x_0})\) }{
+\For { \( i =0\ldots i_\text{max}\)}{
+
+\For { $k \neq \hat{k}(\mathbf{x_0})$ } {
+	 ${\mathbf{w'}_k} \gets \nabla f_k(\mathbf{x}) - \nabla f_{\hat{k}(\mathbf{x_0})}(\mathbf{x}) $\;
+$f'_k \gets f_k(\mathbf{x}) - f_{\hat{k}(\mathbf{x_0})}(\mathbf{x}) $
+}
+$\hat{l} \gets \arg \min_{k \neq \hat{k}(\mathbf{x_0})} \frac{ \vert f'_k \vert}{\Vert \mathbf{w'}_k \Vert_2}  $
+
+$\mathbf{r}_i \gets {\frac{\vert f'_{\hat{l}} \vert}{\Vert \mathbf{w'_{\hat{l}}} \Vert^2_2}} \mathbf{w'_{\hat{l}}} $
+
+
+\(\mathbf{x} \gets \mathbf{x} + \mathbf{r}_i\)\;
+}
+}
+\Return \(\mathbf{\hat{r}}=(1+\eta)\sum_i \mathbf{r}_i\)
+ \caption{Multiclass DeepFool}
+\end{algorithm}
+\end{figure}
+\begin{figure}
+\begin{algorithm}[H]\label{alg:2}
+
+\SetAlgoLined
+{\bf Input}:Data set \(X\), classifier \(\hat{k}\), desired norm \(\left\|.\right\|_2\) of
+the perturbation \(\xi\), desired accuracy on perturbed samples \(\delta\).\;
+{\bf Output}: Universal perturbation vector \(\rb\)\;
+Initialize \(\Delta\rb \gets 0\)\;%, epoch\gets 1\;\;
+
+\While{\textup {Average fooling rate is too low}}{
+\ForEach{\(\mathrm{datapoint}\) \(\xb\in X\) }{ 
+\If{ \(\mathrm{with}\) \(\hat{k}(\xb)=\hat{k}(\xb+\rb)\)}{
+	%\(\Delta \rb\gets \underset{r}{\arg \min}\left\|r\right\|_2~\mathrm{s.t.}~\hat{k}(\mathbf{x}+\rb+\Delta\rb)\neq\hat{k}(\mathbf{x})\)\;
+		\(\Delta \rb\gets\mathrm{DeepFool} (\xb+\rb,\hat{k})\gets \underset{\Delta\rb}{\arg \min}\left\|\Delta\rb\right\|_2~\mathrm{s.t.}~\hat{k}(\mathbf{x}+\rb+\Delta\rb)\neq\hat{k}(\mathbf{x}+\rb)\)\;
+	\(\rb\gets \rb+\Delta \rb\)\;  
+	\(\rb\gets \sqrt{\xi}\rb/\left\|\rb\right\|_2\)
+}  
+ }}
+\Return \rb
+ \caption{Computation of universal adversarial perturbations}
+\end{algorithm}
+\end{figure}
+
+
+\begin{figure}
+\begin{algorithm}[H]\label{alg:4}
+\SetAlgoLined
+%\KwResult{Write here the result }
+{\bf Input}:image \(\mathbf{x}\), classifier \(f\), maximal number of iterations \(i_{\text{max}}\)\;
+{\bf Output}: Universal perturbation vector \(\mathbf{\hat{r}}\)\;
+Initialize \(\mathbf{x_0} \gets \mathbf{x}\)\;
+ \While{\(\hat{k}(\mathbf{x_i}) = \hat{k}(\mathbf{x_0})\) {\bf and} \( i \leq i_\text{max}\)}{
+\ForEach{\(\mathrm{datapoint}\) \(\mathbf{x_0}\in X\) \(\mathrm{with}\) \(\hat{k}(\mathbf{x_0})\neq\hat{k}(\mathbf{x_0}+v)\)}{
+\For { $k \neq \hat{k}_f(\mathbf{x_0})$ } {
+	 ${\mathbf{w}_k'} \gets \nabla f_k(\mathbf{x}) - \nabla f_{\hat{k}(\mathbf{x_0})}(\mathbf{x}) $\;
+$f'_k \gets f_k(\mathbf{x}) - f_{\hat{k}(\mathbf{x_0})}(\mathbf{x}) $
+}
+\For { $k \neq \hat{k_g}(\mathbf{x_0})$ } {
+	 ${\mathbf{u}_k'} \gets \nabla g_k(\mathbf{x}) - \nabla g_{\hat{k}(\mathbf{x_0})}(\mathbf{x}) $\;
+$g'_k \gets g_k(\mathbf{x}) - g_{\hat{k}(\mathbf{x_0})}(\mathbf{x}) $
+}
+$\hat{l}_f,\hat{l}_g \gets \arg \min_{\kf \neq \hat{k}_f(\mathbf{x_0}) \& \kg \neq \hat{k}_g(\mathbf{x_0}) } 
+\frac{ \left|f_{\kf}' \right|+\left| g_{\kg}'\right|}{\left\|\mathbf{w}_{\kf}'+\mathbf{u}_{\kg}' \right\|_2}  $
+
+$\mathbf{r}_i \gets \frac{\bigl|f_{\hat{l}_{\!f}}' \bigr|+\left| g_{\hat{l}_{g}}'\right|}{\bigl\|\mathbf{w}_{\hat{l}_{\!f}}'+\mathbf{u}_{\hat{l}_g}' \bigr\|_2} \left(\mathbf{w}_{\hat{l}_{\!f}}'+\mathbf{u}_{\hat{l}_g}'\right) $
+{\bf	Rescale ???????}\(v\gets \sqrt{\xi}v/\left\|v\right\|_p\)
+
+\(\mathbf{x} \gets \mathbf{x} + \mathbf{r}_i\)\;
+\(i \gets i + 1\)\;
+}
+}
+\Return \(\hat{r}=(1+\eta)\sum_i \mathbf{r}_i\)
+ \caption{modified UAP-Generation}
+\end{algorithm}
+\end{figure}
