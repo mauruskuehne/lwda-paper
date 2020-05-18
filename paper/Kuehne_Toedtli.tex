@@ -38,9 +38,9 @@
 \bibliographystyle{splncs04}
 \begin{document}
 %
-\title{Contribution Title}%\thanks{Supported by organization x.}
+\title{Combining Universal Adversarial Perturbations on two Networks}%\thanks{Supported by organization x.}
 %
-%\titlerunning{Abbreviated paper title}
+\titlerunning{Combining Universal Adversarial Perturbations}
 % If the paper title is too long for the running head, you can set
 % an abbreviated paper title here
 %
@@ -62,10 +62,9 @@ Institut für Informations- und Prozessmanagement, FHS St.Gallen, \\
 \maketitle              % typeset the header of the contribution
 %
 \begin{abstract}
-The abstract should briefly summarize the contents of the paper in
-150--250 words.
-\cite{yu_generating_2018}
-\keywords{First keyword  \and Second keyword \and Another keyword.}
+Universal adversarial perturbations (UAPs) are small perturbations imposed on images that are able to fool a single convolutional neural network image classifier. They have been shown to generalize well to other neural networks. Here, we report on our reproduction effort of the results given in~\cite{moosavi-dezfooli_universal_2017} and study two methods to construct UAPs for several neural networks. While the results are not strong enough to make general conclusions, they suggest that UAPs indeed profit from being constructed on several neural networks. Also, we show that a linear interpolation between two UAPs does not produce a viable UAP on both networks.
+%\cite{yu_generating_2018}
+\keywords{Adversarial Training\and Universal Adversarial Perturbation}
 \end{abstract}
 %
 %
@@ -110,7 +109,9 @@ Variants of it exist that sample the images differently. We note that adding up 
  
 \subsubsection{Interpolation between UAP on individual networks}
 A simple yet instructive alternative to the above rather involved perturbation construction is given by a simple weighted average of the perturbation vectors generated on the individual networks. If we restrict our attention to the combination of two neural networks for now, then the weighted averages of the perturbations lie on a line in the high-dimensional vector space of images. In the following, we specifically investigate whether any perturbation lying on this line improves on the fooling capability of the two endpoints with respect to a third network.
-Formally, given UAPs \(\mathbf{r}_f\) and \(\mathbf{r}_g\) of two neural networks $f$ and $g$, we consider \[\mathbf{r}_{fg}\left(\lambda\right)=\lambda\,\mathbf{r}_f+\left(1-\lambda\right)\mathbf{r}_g\]	
+Formally, given UAPs \(\mathbf{r}_f\) and \(\mathbf{r}_g\) of two neural networks $f$ and $g$, we consider \begin{equation}\label{eq:interp}
+\mathbf{r}_{fg}\left(\lambda\right)=\lambda\,\mathbf{r}_f+\left(1-\lambda\right)\mathbf{r}_g
+\end{equation}	
 for values \(\lambda\in\left[0,1\right]\).
 
 \subsubsection{Outlook to other approaches}
@@ -144,9 +145,9 @@ Initialize \(\rb \gets 0\)\;%, epoch\gets 1\;\;
 \end{figure}
 
 \section{Results}
-
+In this section we first discuss our attempt at the reproduction of the results in {\bf Referenz!} the transferability of UAPs accross neural network architectures. We then provide the results of our attempts at constructing UAP based on two neural network architectures at the same time.
 \subsection{Reproduction of the Original Results on Universal Adversarial Perturbations}
-Here we report on our efforts to reproduce the results given in {\bf Referenz!}. There, the DeepFool and Universal Adversarial Perturbations algorithms have been tested on 5 different neural networks. We chose networks with publicly available pretrained weights similar to the ones used in {\bf UAP zitieren} to be able to compare the achieved fooling rates with the original paper. Separate experiments have been performed by training individual UAPs on each of the networks, and subsequently measuring the fooling rates on all available networks. All perturbations were generated using a random subset of 10'000 images of the ImageNet training set {\bf ImageNet zitieren}, and the fooling rates were measured on the ImageNet validation set (containing 50'000 images).
+Dezfooli et.al. the DeepFool and Universal Adversarial Perturbations algorithms have been trained and tested on 5 different neural networks {\bf Referenz!}. We choose networks similar to the ones used in {\bf UAP zitieren} that have publicly available pretrained weights. We compare the achieved fooling rates with those given in the original paper. Separate experiments have been performed by training individual UAPs on each of the networks, and subsequently measuring the fooling rates on all available networks. All perturbations were generated using a random subset of 10'000 images of the ImageNet training set~\cite{imagenet_cvpr09}, and the fooling rates were measured on the ImageNet validation set (containing 50'000 images).
 
 \begin{table}[]
 \centering
@@ -167,11 +168,8 @@ ResNet-152	& $42.4\%$	&	$54.6\%$		&	$31.4\%$		&	$30.1\%$		& 	$73.4\%$	\\
 
 Table \ref{tbl_stoerraten_reprod_kreuz_linf} shows the achieved fooling rates for the tested models. The first column indicates the network used to generate the UAP, while the first row gives the network on which the fooling rate is measured. The main diagonal therefore contains the fooling rates achieved using the same model for generating the perturbation and measuring the fooling rate.
 
-For most models the fooling rates reported in the original paper could not be achieved. For VGG-F, VGG-16, VGG-19 and ResNet-152 our absolute fooling rates were between 4.1\% and 23.5\% lower {\bf absolute Prozentzahlen, oder relative?}. For Inception we achieved a fooling rate 3\% higher than the one reported in the original paper. 
 
-The non-diagonal values in table \ref{tbl_stoerraten_reprod_kreuz_linf} are large but significantly smaller than the diagonal values. They show a degree of transferability of UAPs generated with DeepFool to other models. Therefore, despite the reproducibility problems, these results broadly confirm that UAPs generated with DeepFool generalize to other network architectures. Nevertheless, it is clear that some aspects UAPs are specific to a given neural network architecture. Finding a way to improve the non-diagonal elements potentially at the cost of the diagonal ones is an interesting task that we address next.
-
-Figure~\ref{fig:UAPs} shows the perturbations generated. In their general structure and appearance, they resemble the ones reported in~\cite{moosavi-dezfooli_universal_2017-1} very much. This indicates that the relevant deviations from the original results stem from configuration details such as the precise hyperparameter values chosen or the number of training epochs. We have tried to optimize these parameters {\bf oder auch andere? Hier auflisten} using grid searches, but the available compute ressources have limited these efforts. In particular, it is possible that the {\bf stimmt das??} identification of the class boundaries used by DeepFool to construct the perturbation was not identical to the original publication, as checking all 1000 Training boundaries of ImageNet proved infeasible. The strategy taken by the authors of~\{bf cite Dezfooli} might be the crucial missing information.
+Figure~\ref{fig:UAPs} shows the perturbations generated. In their general structure and appearance, they are similar to the ones reported in~\cite{moosavi-dezfooli_universal_2017-1}. This indicates that the relevant deviations from the original results stem from configuration details such as the precise hyperparameter values chosen or the number of training epochs. We have tried to optimize these parameters {\bf oder auch andere? Hier auflisten} using grid searches, but the available compute ressources have limited these efforts. In particular, it is possible that the {\bf stimmt das??} identification of the class boundaries used by DeepFool to construct the perturbation was not identical to the original publication, as checking all 1000 training boundaries of ImageNet proved infeasible. The strategy taken by the authors of~{\bf cite Dezfooli} might be the crucial missing information.
  
 
 \begin{figure}[h]\label{fig:UAPs}
@@ -183,103 +181,46 @@ Figure~\ref{fig:UAPs} shows the perturbations generated. In their general struct
 
 \subsection{Evaluation of Attempts to Construct Universal Adversarial Perturbations for Multiple Neural Networks}
 In this section we present our results for constructing UAPs that make use of two neural networks.
-\subsubsection{Alternated generation of perturbations}
-Table ... shows...
-\subsubsection{Interpolation between UAP on individual networks}
-Table ... shows...
+\subsubsection{Alternated generation of perturbations and linear Interpolation between UAP on individual networks}
+Alg.~\ref{alg:3} has been applied to the set of classifiers $K=\left\{\text{Inception},\text{VGG-16}\right\}$, and the fooling rates are reported for these two networks and for ResNet-152. Table~\ref{tab:alternatedgeneration} has two sections. In the upper section, the network listed in the first column is used to generate the perturbation. The columns give the fooling rates on the network given in the column title.
 
-\section{Discussion}
-
-\section{Conclusions}
-
-\subsubsection{Versuch der Reproduktion Mozavi dezfoli}
-		- Resultate Tabelle 7.3. vorstellen und diskutieren:
-			- Störwerte und gestörtes Netzwerk identisch 3\%-20\% schlechter als Mozavi
-			- gestörtes Netzwerk nicht identisch zum Netzwerk das Störung generiert hat: teilweise bis zu 10\% und 30\% schlechter. 
-		- Resultat: Reproduktion sieht qualitativ ähnlich aus. Abb 7.1.
-		- ausgeglichenes Datenset; ????????????????????????????????????????? Was bedeutet das?
-		- erwähne, dass Publikation unvollständig für Reproduktion: Defaultwerte von Parameter, welche nicht in publikation beschrieben; Parameterwerte von DeepFool nicht mehr angegeben.
-		- Versuch, verschiedene Parameter zu optimieren wurde versucht, brachte nur ca. 5\% Verbesserung
-\subsubsection{Kombinationsverfahren}
-- Tabelle	8.1 ohne Modifiziertes DeepFool
-\begin{table}[]
+The second section reports results by applying the alternated generation of UAPs and the interpolation method given in eq.~(\ref{eq:interp}) using the optimal value $\lambda=0.45$.
+\begin{table}[]\label{tab:alternatedgeneration}
 \centering
-\caption{Vergleich der Störraten von einzelnen Störwerten und Kombinationsverfahren (Validation-Set, $l_\infty$, $\xi=10$). Es werden die besten gemessenen Ergebnisse aufgelistet.}
+\caption{Comparison of the fooling rates by UAPs trained on individual networks (upper three rows) and of the alternated generation and linear interpolation procedures. Results are reported on the validation set, using the $l_\infty$-norm and $\xi=10$. 
+{\bf Maurus, das müsssen wir diskutieren. Ist das okay...? Beste resultate- über welche Runs? Es werden die besten gemessenen Ergebnisse aufgelistet.}}
 \begin{tabular}{|l|l|l|l|l|l|}
 \hline
 
 											&	Inception	&	VGG-16		&	ResNet-152		\\ \hline
-Inception-Störwert							&	$81.9\%$		&	$15.9\%$	&	$15.9\%$		\\
-VGG-16-Störwert								&	$59.9\%$		&	$58.7\%$	&	$38.0\%$		\\
-ResNet-152-Störwert							&	$54.6\%$		&	$31.4\%$	&	$73.4\%$		\\ \hline
-lin. Interpolation ($45\% \overline{PQ}$)	&	$46.2\%$		&	$23.7\%$	&	$16.7\%$		\\
-Finetuning									&	$59.9\%$		&	$57.9\%$	&	$38.6\%$		\\
-abwechselndes Generieren						&	$67.3\%$		&	$60.6\%$	&	$41.2\%$		\\
-modifiziertes DeepFool						&	$43.6\%$		&	$18.4\%$	&	$14.1\%$		\\
-
-
+Inception UAP							&	\(81.9\%\)		&	\(15.9\%\)	&	\(15.9\%\)		\\
+VGG-16 UAP								&	\(59.9\%\)		&	\(58.7\%\)	&	\(38.0\%\)		\\
+ResNet-152 UAP &	\(54.6\%\)		&	\(31.4\%\)	&	\(73.4\%\)		\\ \hline
+alternated generation of UAPs&	\(67.3\%\)		&	\(60.6\%\)	&	\(41.2\%\)		\\
+linear interpolation (\(\lambda=0.45\))	&	\(46.2\%\)		&	\(23.7\%\)	&	\(16.7\%\)		\\
+%Finetuning									&	$59.9\%$		&	$57.9\%$	&	$38.6\%$		\\
+%modifiziertes DeepFool						&	$43.6\%$		&	$18.4\%$	&	$14.1\%$		\\
 \hline 
 \end{tabular}
 \label{tbl_vergleich_comb}
 \end{table}
-- Diskussion Resultate Reproduktion des UAP-Verfahrens: 
-- Diskussion Resultate Kombinationsverfahren: kombiniere Inception und VGG, optimiere Störwerte
-Vergleiche mit störwerten, die direkt auf einem einzelnen Modell generiert werden. Vergleiche einerseits mit Störwerten der Einzelmodelle, andererseits mit Störwerten eines unabhängigen Modells (ResNet)
-
-\subsubsection{Discussion}
-- Einzelne Parameter konnten nicht gut optimiert werden wegen fehlender Rechenleistung
-\subsubsection{Conclusion and Outlook}
-Weitere Modellpaare kombinieren.
 
 
-\section{Introduction}
-Moozavi-Dezfoli\cite{fawzi_robustness_2017}\\
-DeepFool: a simple and accurate method to fool deep neural:\cite{moosavi-dezfooli_deepfool_2016}\\
-Universal adversarial perturbations:\cite{moosavi-dezfooli_universal_2017}
-\subsection{Results}
-Please note that the first paragraph of a section or subsection is
-not indented. The first paragraph that follows a table, figure,
-equation etc. does not need an indent, either.
+\section{Discussion}
+\subsection{Reproduction of the Original Results on Universal Adversarial Perturbations}
+For most models the fooling rates reported in the original paper could not be achieved. For VGG-F, VGG-16, VGG-19 and ResNet-152 our absolute fooling rates were between 4.1\% and 23.5\% lower {\bf absolute Prozentzahlen, oder relative?}. For Inception we achieved a fooling rate {\bf on itself?} 3\% higher than the one reported in the original paper. Clearly, this is not satisfactory and further research is needed to state the precise conditions under which a reliable reproduction of the reported fooling rates is possible. As a step in this direction we provide our code{\bf MAURUS, Link zu Github!}\footnote{}
 
-Subsequent paragraphs, however, are indented.
+The non-diagonal values in table \ref{tbl_stoerraten_reprod_kreuz_linf} are large but significantly smaller than the diagonal values. They show a degree of transferability of UAPs generated with DeepFool to other models. Therefore, despite the reproducibility problems, these results broadly confirm that UAPs generated with DeepFool generalize to other network architectures. Nevertheless, it is clear that some aspects UAPs are specific to a given neural network architecture. Finding a way to improve the non-diagonal elements potentially at the cost of the diagonal ones is the task that we address in the next section.
+\subsubsection{Alternated generation of perturbations and linear Interpolation between UAP on individual networks}
+As the results in table~\ref{tab:alternatedgeneration} clearly show, a linear interpolation between two UAPs does not give good results. One obvious candidate interpretation is that since neural networks are highly non-linear functions, there is no reason to assume that combining their UAPs as a weighted average would produce good perturbations on both networks. Therefore, this attempt can at best serve as a crude baseline for comparison{\bf Maurus: Was war das Kriterium, das $\lambda=0.45$ produziert hat?}. 
 
-\subsubsection{Sample Heading (Third Level)} Only two levels of
-headings should be numbered. Lower level headings remain unnumbered;
-they are formatted as run-in headings.
+The results given by the alternated generation of perturbations (Alg.~\ref{alg:3}) are much better. The transferability of the perturbation from Inception to VGG-16 and vice versa are both better than using perturbations trained on any one of the two networks. Also the generalization to a third network (Resnet-152) is better than for both single-network UAPs. In the case of VGG-16, the UAP generated jointly on both networks even worked slightly better than the one trained on VGG-16 alone. The reason for this effect is not yet established. It may even be a statistical fluctuation as the effect of the particular ImageNet train-test-splitting has not been investigated due to constraints on computational ressources. 
 
-\paragraph{Sample Heading (Fourth Level)}
-The contribution should contain no more than four levels of
-headings. Table~\ref{tab1} gives a summary of all heading levels.
+\section{Conclusions}
+The results reported here on generalizing UAPs across several networks clearly have to be interpreted cautiously given the fact that even the reproduction of previously reported results has not been satisfactory. Establishing reproducibility standards for machine learning publications remains a crucial unmet challenge that is hampering progress.
 
-\begin{table}
-\caption{Table captions should be placed above the
-tables.}\label{tab1}
-\begin{tabular}{|l|l|l|}
-\hline
-Heading level &  Example & Font size and style\\
-\hline
-Title (centered) &  {\Large\bfseries Lecture Notes} & 14 point, bold\\
-1st-level heading &  {\large\bfseries 1 Introduction} & 12 point, bold\\
-2nd-level heading & {\bfseries 2.1 Printing Area} & 10 point, bold\\
-3rd-level heading & {\bfseries Run-in Heading in Bold.} Text follows & 10 point, bold\\
-4th-level heading & {\itshape Lowest Level Heading.} Text follows & 10 point, italic\\
-\hline
-\end{tabular}
-\end{table}
+With the above caution in mind, the results reported here suggest that finding truly universal adversarial perturbations (in the sense that they generalize accross different convolutional neural networks) is not a hopeless endeavour. Such a UAP is not a simple linear combination of UAPs of different networks, but must be constructed in a more subtle way. Our best approach, Alg.~\ref{alg:3}, most certainly is not optimal, but already shows some promising results: The generalizability of the fooling rates to ResNet-152 is enhanced by combining the UAPs of two networks, with respect to the UAPs generated on either one of the Inception or VGG-16 network.
 
-Whenever possible, use vector graphics instead (see
-Fig.~\ref{fig1}).
-
-\begin{figure}
-\includegraphics[width=\textwidth]{fig1.eps}
-\caption{A figure caption is always placed below the illustration.
-Please note that short captions are centered, while long ones are
-justified by the macro package automatically.} \label{fig1}
-\end{figure}
-
-\section{ALTER TEXT, ev. noch nützliche Ideen/Formulierungen}
-Our main attempt of modifying Alg.~\ref{alg:2} such that it incorporates the weaknesses of several neural networks is to hope for an improvement by incorporating the perturbations obtained for each network individually. In a first attempt, one could simply add up the perturbations stemming from two neural networks, see Alg.~\ref{alg:3}. As noted above, because of the norm-projection, this is different from our second attempt (given in Alg.~\ref{alg:4}), in which perturbations for the two networks are added up before projecting onto the norm constraint. Lines 14 and 15 in Alg.~\ref{alg:4} carry the main idea: 
-{\bf After that, again the norm constraint is enforced Tun wir das wirklich???????}.
 
 \bibliography{KuehneToedtli}
 
@@ -384,3 +325,81 @@ DeepFool~\cite{DeepFool-Moosavi-Dezfooli15} is an algorithm for constructing
 - Beschreibung DeepFool
 - Beschreibung UAP-Verfahren: Wie werden adv. perturbations von DeepFool zu universal adv. pert. kombiniert
 - Beschreibung Kombinationsverfahren: Beschreibe Verfahren ohne modifiziertes DeepFool
+
+
+
+
+
+
+
+
+
+\subsubsection{Versuch der Reproduktion Mozavi dezfoli}
+		- Resultate Tabelle 7.3. vorstellen und diskutieren:
+			- Störwerte und gestörtes Netzwerk identisch 3\%-20\% schlechter als Mozavi
+			- gestörtes Netzwerk nicht identisch zum Netzwerk das Störung generiert hat: teilweise bis zu 10\% und 30\% schlechter. 
+		- Resultat: Reproduktion sieht qualitativ ähnlich aus. Abb 7.1.
+		- ausgeglichenes Datenset; ????????????????????????????????????????? Was bedeutet das?
+		- erwähne, dass Publikation unvollständig für Reproduktion: Defaultwerte von Parameter, welche nicht in publikation beschrieben; Parameterwerte von DeepFool nicht mehr angegeben.
+		- Versuch, verschiedene Parameter zu optimieren wurde versucht, brachte nur ca. 5\% Verbesserung
+\subsubsection{Kombinationsverfahren}
+- Tabelle	8.1 ohne Modifiziertes DeepFool
+
+- Diskussion Resultate Reproduktion des UAP-Verfahrens: 
+- Diskussion Resultate Kombinationsverfahren: kombiniere Inception und VGG, optimiere Störwerte
+Vergleiche mit störwerten, die direkt auf einem einzelnen Modell generiert werden. Vergleiche einerseits mit Störwerten der Einzelmodelle, andererseits mit Störwerten eines unabhängigen Modells (ResNet)
+
+\subsubsection{Discussion}
+- Einzelne Parameter konnten nicht gut optimiert werden wegen fehlender Rechenleistung
+\subsubsection{Conclusion and Outlook}
+Weitere Modellpaare kombinieren.
+
+
+\section{Introduction}
+Moozavi-Dezfoli\cite{fawzi_robustness_2017}\\
+DeepFool: a simple and accurate method to fool deep neural:\cite{moosavi-dezfooli_deepfool_2016}\\
+Universal adversarial perturbations:\cite{moosavi-dezfooli_universal_2017}
+\subsection{Results}
+Please note that the first paragraph of a section or subsection is
+not indented. The first paragraph that follows a table, figure,
+equation etc. does not need an indent, either.
+
+Subsequent paragraphs, however, are indented.
+
+\subsubsection{Sample Heading (Third Level)} Only two levels of
+headings should be numbered. Lower level headings remain unnumbered;
+they are formatted as run-in headings.
+
+\paragraph{Sample Heading (Fourth Level)}
+The contribution should contain no more than four levels of
+headings. Table~\ref{tab1} gives a summary of all heading levels.
+
+\begin{table}
+\caption{Table captions should be placed above the
+tables.}\label{tab1}
+\begin{tabular}{|l|l|l|}
+\hline
+Heading level &  Example & Font size and style\\
+\hline
+Title (centered) &  {\Large\bfseries Lecture Notes} & 14 point, bold\\
+1st-level heading &  {\large\bfseries 1 Introduction} & 12 point, bold\\
+2nd-level heading & {\bfseries 2.1 Printing Area} & 10 point, bold\\
+3rd-level heading & {\bfseries Run-in Heading in Bold.} Text follows & 10 point, bold\\
+4th-level heading & {\itshape Lowest Level Heading.} Text follows & 10 point, italic\\
+\hline
+\end{tabular}
+\end{table}
+
+Whenever possible, use vector graphics instead (see
+Fig.~\ref{fig1}).
+
+\begin{figure}
+\includegraphics[width=\textwidth]{fig1.eps}
+\caption{A figure caption is always placed below the illustration.
+Please note that short captions are centered, while long ones are
+justified by the macro package automatically.} \label{fig1}
+\end{figure}
+
+\section{ALTER TEXT, ev. noch nützliche Ideen/Formulierungen}
+Our main attempt of modifying Alg.~\ref{alg:2} such that it incorporates the weaknesses of several neural networks is to hope for an improvement by incorporating the perturbations obtained for each network individually. In a first attempt, one could simply add up the perturbations stemming from two neural networks, see Alg.~\ref{alg:3}. As noted above, because of the norm-projection, this is different from our second attempt (given in Alg.~\ref{alg:4}), in which perturbations for the two networks are added up before projecting onto the norm constraint. Lines 14 and 15 in Alg.~\ref{alg:4} carry the main idea: 
+{\bf After that, again the norm constraint is enforced Tun wir das wirklich???????}.
