@@ -147,11 +147,11 @@ Initialize \(\rb \gets 0\)\;%, epoch\gets 1\;\;
 \section{Results}
 In this section we first discuss our attempt at the reproduction of the results in {\bf Referenz!} the transferability of UAPs accross neural network architectures. We then provide the results of our attempts at constructing UAP based on two neural network architectures at the same time.
 \subsection{Reproduction of the Original Results on Universal Adversarial Perturbations}
-Dezfooli et.al. the DeepFool and Universal Adversarial Perturbations algorithms have been trained and tested on 5 different neural networks {\bf Referenz!}. We choose networks similar to the ones used in {\bf UAP zitieren} that have publicly available pretrained weights. We compare the achieved fooling rates with those given in the original paper. Separate experiments have been performed by training individual UAPs on each of the networks, and subsequently measuring the fooling rates on all available networks. All perturbations were generated using a random subset of 10'000 images of the ImageNet training set~\cite{imagenet_cvpr09}, and the fooling rates were measured on the ImageNet validation set (containing 50'000 images).
+Dezfooli et.al. the DeepFool and Universal Adversarial Perturbations algorithms have been trained and tested on 5 different neural networks {\bf Referenz!}. We choose networks similar to the ones used in {\bf UAP zitieren} that have publicly available pretrained weights. We compare the achieved fooling rates with those given in the original paper. Separate experiments have been performed by training individual UAPs on each of the networks, and subsequently measuring the fooling rates on all available networks. All perturbations were generated using the same random subset of 10'000 images of the ImageNet training set~\cite{imagenet_cvpr09}, and the fooling rates were measured on the ImageNet validation set (containing 50'000 images).
 
 \begin{table}[]
 \centering
-\caption{Fooling rates for the ImageNet validation set. The rows show the model that was used to generate the perturbations. The columns show which model was used to measure the fooling rate. ($l_\infty$, $\xi=10$)}
+\caption{Fooling rates for the ImageNet validation set.}
 \begin{tabular}{|l|l|l|l|l|l|}
 \hline
 
@@ -166,16 +166,19 @@ ResNet-152	& $42.4\%$	&	$54.6\%$		&	$31.4\%$		&	$30.1\%$		& 	$73.4\%$	\\
 \label{tbl_stoerraten_reprod_kreuz_linf}
 \end{table}
 
-Table \ref{tbl_stoerraten_reprod_kreuz_linf} shows the achieved fooling rates for the tested models. The first column indicates the network used to generate the UAP, while the first row gives the network on which the fooling rate is measured. The main diagonal therefore contains the fooling rates achieved using the same model for generating the perturbation and measuring the fooling rate.
+Table \ref{tbl_stoerraten_reprod_kreuz_linf} shows the achieved fooling rates for the tested models. The first column indicates the network used to generate the UAP, while the first row gives the network on which the fooling rate is measured. 
+The main diagonal therefore contains the self-fooling rates, i.e. the fooling rates achieved using the same model for generating the perturbation and measuring the fooling rate. Values reported are for epoch 20, at which point the mean value over the last 5 epochs typically varies by less than 0.005. Parameter values in the notation of {\bf DEZFOOLI zitieren} are \(p=\infty\) and \(\xi=10\). We used 10 DeepFool iterations and \(\eta=0.02\). Furthermore, a relevant parameter is the number of class boundaries
+%\footnote{Called $\text{num_classes}$ in the code given in 
+%https://github.com/LTS4/universal.
+%}
+. It gives the number of highest probability class boundaries in whose direction a perturbation is searched for. Computation time is highly sensitive to this parameter, and therefore {\bf MAURUS IDEE?}.
 
-
-Figure~\ref{fig:UAPs} shows the perturbations generated. In their general structure and appearance, they are similar to the ones reported in~\cite{moosavi-dezfooli_universal_2017-1}. This indicates that the relevant deviations from the original results stem from configuration details such as the precise hyperparameter values chosen or the number of training epochs. We have tried to optimize these parameters {\bf oder auch andere? Hier auflisten} using grid searches, but the available compute ressources have limited these efforts. In particular, it is possible that the {\bf stimmt das??} identification of the class boundaries used by DeepFool to construct the perturbation was not identical to the original publication, as checking all 1000 training boundaries of ImageNet proved infeasible. The strategy taken by the authors of~{\bf cite Dezfooli} might be the crucial missing information.
+Figure~\ref{fig:UAPs} shows the perturbations generated. In their general structure and appearance, they are similar to the ones reported in~\cite{moosavi-dezfooli_universal_2017-1}. This indicates that the relevant deviations from the original results stem from configuration details such as the precise hyperparameter values chosen or the number of training epochs. We have tried to optimize these parameters {\bf oder auch andere? Hier auflisten} using grid searches, but the available compute ressources have limited these efforts. In particular, it is possible that the {\bf stimmt das??} identification of the class boundaries used by DeepFool to construct the perturbation was not identical to the original publication, as the corresponding parameter {\sl num\_classes} was not given there. as checking all 1000 training boundaries of ImageNet proved infeasible. The strategy taken by the authors of~{\bf cite Dezfooli} might be the crucial missing information.
  
-
 \begin{figure}[h]\label{fig:UAPs}
 	\centering
 		\includegraphics[width=1.00\textwidth]{images/own_perturbations.png}
-	\caption{Visualisation of the generated perturbations. To visualise the perturbations we shifted them by $+\xi$ and extended them to the entire color space with a scalar multiplication. }
+	\caption{Visualisation of the generated perturbations. To visualise the perturbations we shifted them by $+\xi$ and extended them to the entire color space with a scalar multiplication.}
 	\label{fig_stoerwerte}
 \end{figure}
 
@@ -193,7 +196,7 @@ The second section reports results by applying the alternated generation of UAPs
 \hline
 
 											&	Inception	&	VGG-16		&	ResNet-152		\\ \hline
-Inception UAP							&	\(81.9\%\)		&	\(15.9\%\)	&	\(15.9\%\)		\\
+Inception V1 UAP							&	\(81.9\%\)		&	\(15.9\%\)	&	\(15.9\%\)		\\
 VGG-16 UAP								&	\(59.9\%\)		&	\(58.7\%\)	&	\(38.0\%\)		\\
 ResNet-152 UAP &	\(54.6\%\)		&	\(31.4\%\)	&	\(73.4\%\)		\\ \hline
 alternated generation of UAPs&	\(67.3\%\)		&	\(60.6\%\)	&	\(41.2\%\)		\\
@@ -208,9 +211,11 @@ linear interpolation (\(\lambda=0.45\))	&	\(46.2\%\)		&	\(23.7\%\)	&	\(16.7\%\)	
 
 \section{Discussion}
 \subsection{Reproduction of the Original Results on Universal Adversarial Perturbations}
-For most models the fooling rates reported in the original paper could not be achieved. For VGG-F, VGG-16, VGG-19 and ResNet-152 our absolute fooling rates were between 4.1\% and 23.5\% lower {\bf absolute Prozentzahlen, oder relative?}. For Inception we achieved a fooling rate {\bf on itself?} 3\% higher than the one reported in the original paper. Clearly, this is not satisfactory and further research is needed to state the precise conditions under which a reliable reproduction of the reported fooling rates is possible. As a step in this direction we provide our code{\bf MAURUS, Link zu Github!}\footnote{}
+For most models the fooling rates reported in the original paper could not be achieved. For VGG-F, VGG-16, VGG-19 and ResNet-152 our  self-fooling rates were between 4.1 and 23.5 absolute percetage points lower. For Inception we achieved a self-fooling rate 3 absolute percentage points higher than the one reported in the original paper. Clearly, this is not satisfactory and further research is needed to state the precise conditions under which a reliable reproduction of the reported fooling rates is possible. As a step in this direction we provide our code.\footnote{https://github.com/mauruskuehne/lwda-paper}
 
-The non-diagonal values in table \ref{tbl_stoerraten_reprod_kreuz_linf} are large but significantly smaller than the diagonal values. They show a degree of transferability of UAPs generated with DeepFool to other models. Therefore, despite the reproducibility problems, these results broadly confirm that UAPs generated with DeepFool generalize to other network architectures. Nevertheless, it is clear that some aspects UAPs are specific to a given neural network architecture. Finding a way to improve the non-diagonal elements potentially at the cost of the diagonal ones is the task that we address in the next section.
+The non-diagonal values in table \ref{tbl_stoerraten_reprod_kreuz_linf} are large but typically significantly smaller than the diagonal values. They show a degree of transferability of UAPs generated with DeepFool to other models. Therefore, despite the reproducibility problems, these results broadly confirm that UAPs generated with DeepFool generalize to other network architectures. Nevertheless, it is clear that some aspects UAPs are specific to a given neural network architecture. Finding a way to improve the non-diagonal elements potentially at the cost of the diagonal ones is the task that we address in the next section.
+Interestingly, we achieved lower fooling rates than Moozavi-Dezfooli et.al, except for the Inception Network, for which we achieve 3-8 absolute percentage points higher fooling rates.
+
 \subsubsection{Alternated generation of perturbations and linear Interpolation between UAP on individual networks}
 As the results in table~\ref{tab:alternatedgeneration} clearly show, a linear interpolation between two UAPs does not give good results. One obvious candidate interpretation is that since neural networks are highly non-linear functions, there is no reason to assume that combining their UAPs as a weighted average would produce good perturbations on both networks. Therefore, this attempt can at best serve as a crude baseline for comparison{\bf Maurus: Was war das Kriterium, das $\lambda=0.45$ produziert hat?}. 
 
