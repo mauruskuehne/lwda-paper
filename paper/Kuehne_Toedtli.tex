@@ -33,6 +33,7 @@
 \newcommand{\xn}{\ensuremath{\mathbf{x_0}}}
 \newcommand{\xb}{\ensuremath{\mathbf{x}}}
 \newcommand{\rb}{\ensuremath{\mathbf{r}}}
+\newcommand{\vb}{\ensuremath{\mathbf{v}}}
 \newcommand{\kf}{\ensuremath{k_{\!f}}}
 \newcommand{\kg}{\ensuremath{k_{\!g}}}
 \bibliographystyle{splncs04}
@@ -110,11 +111,11 @@ As UAPs are constructed by adding up the perturbations generated using DeepFool,
 Variants of it exist that sample the images differently. We note that adding up the perturbations is not a commutative operation, since projections take place once the size (norm) of the perturbation becomes too large. One might for example generate perturbations for one image from both neural networks, instead of alternatingly using a single network on an image sample. In our experience, these variations do not significantly change the fooling rates.
  
 \subsubsection{Interpolation between UAP on individual networks}
-A simple yet instructive alternative to the above rather involved perturbation construction is given by a simple weighted average of the perturbation vectors generated on the individual networks. If we restrict our attention to the combination of two neural networks for now, then the weighted averages of the perturbations lie on a line in the high-dimensional vector space of images. In the following, we specifically investigate whether any perturbation lying on this line improves on the fooling capability of the two endpoints with respect to a third network.
-Formally, given UAPs \(\mathbf{r}_f\) and \(\mathbf{r}_g\) of two neural networks $f$ and $g$, we consider \begin{equation}\label{eq:interp}
-\mathbf{r}_{fg}\left(\lambda\right)=\lambda\,\mathbf{r}_f+\left(1-\lambda\right)\mathbf{r}_g
+A simple yet instructive alternative to the above rather involved perturbation construction is given by a simple weighted average of the perturbation vectors generated on the individual networks. If we restrict our attention to the combination of two neural networks for now, then the weighted averages of the perturbations lie on a line in the high-dimensional vector space of images. In the following, we specifically investigate whether any perturbation lying on this line improves on the fooling capability of the two endpoints with respect a third network.
+Formally, given UAPs \(\mathbf{v}_f\) and \(\mathbf{v}_g\) of two neural networks $f$ and $g$, we consider \begin{equation}\label{eq:interp}
+\mathbf{v}_{fg}\left(\lambda\right)=\lambda\,\mathbf{v}_f+\left(1-\lambda\right)\mathbf{v}_g
 \end{equation}	
-for values \(\lambda\in\left[0,1\right]\).
+for values \(\lambda\in\left[0,1\right]\). We seek the value of $\lambda$ that maximizes the average fooling rate over $f$, $g$ and a third network.
 
 \subsubsection{Outlook to other approaches}
 We have also investigated other, more involved approaches that led to unsatisfactory results. In particular, we were interested in constructing a multi-class DeepFool procedure that uses the gradients of two networks to compute a perturbation of a single image. One might try to find perturbations towards class boundaries that are aligned as much as possible, but where the class boundaries correspond to different classes in different networks. As of now, these attempts have not provided efficient UAPs for multiple networks.
@@ -125,23 +126,23 @@ We have also investigated other, more involved approaches that led to unsatisfac
 
 \SetAlgoLined
 {\bf Input}:Data set \(X\), a set of classifiers \(K\), desired norm \(\left\|.\right\|_p\) of
-the perturbation \(\xi\).\;
-{\bf Output}: Universal perturbation vector \(\rb\)\;
-Initialize \(\rb \gets 0\)\;%, epoch\gets 1\;\;
+the perturbation \(\xi\)\;
+{\bf Output}: Universal perturbation vector \(\vb\)\;
+Initialize \(\vb \gets 0\)\;%, epoch\gets 1\;\;
 
 \While{\textup {Average fooling rate is too low}}{
 \ForEach{\(\mathrm{image~}\xb\in X\)  }{ 
 \ForEach{\(\hat{k}\in K\)  }{ 
 	%\(\Delta \mathbf{r}_k\gets\mathrm{UAP} (k)\)\;
-	\If{ \(\hat{k}(\xb)=\hat{k}(\xb+\rb)\)}{
+	\If{ \(\hat{k}(\xb)=\hat{k}(\xb+\vb)\)}{
 	%\(\Delta \rb\gets \underset{r}{\arg \min}\left\|r\right\|_2~\mathrm{s.t.}~\hat{k}(\mathbf{x}+\rb+\Delta\rb)\neq\hat{k}(\mathbf{x})\)\;
-		\(\Delta \rb\gets\mathrm{DeepFool} (\xb+\rb,\hat{k})\)\;
-	\(\rb\gets \rb+\Delta \rb\)\;  
-	\(\rb\gets \sqrt{\xi}\rb/\left\|\rb\right\|_p\)
+		\(\Delta \vb\gets\mathrm{DeepFool} (\xb+\vb,\hat{k})\)\;
+	\(\vb\gets \vb+\Delta \vb\)\;  
+	\(\vb\gets \sqrt{\xi}\vb/\left\|\vb\right\|_p\)
 }  }
 } 
  }
-\Return \rb
+\Return \vb
  \caption{Computation of universal adversarial perturbations for multiple neural networks. }
 \end{algorithm}
 \end{figure}
@@ -151,7 +152,9 @@ In this section we first discuss our attempt at the reproduction of the results 
 \subsection{Reproduction of the Original Results on Universal Adversarial Perturbations}
 Dezfooli et.al. tested the DeepFool and Universal Adversarial Perturbations algorithms on 5 different neural networks {\bf Referenz!}. We choose networks similar to the ones used in {\bf UAP zitieren} that have publicly available pretrained weights. We compare the achieved fooling rates with those given in the original paper. Separate experiments have been performed by training individual UAPs on each of the networks, and subsequently measuring the fooling rates on all available networks. All perturbations were generated using the same random subset of 10'000 images of the ImageNet training set~\cite{imagenet_cvpr09}, and the fooling rates were measured on the ImageNet validation set (containing 50'000 images).
 
-\begin{table}[]
+Figure~\ref{fig:UAPs} shows the perturbations generated. In their general structure and appearance, they are similar to the ones reported in~\cite{moosavi-dezfooli_universal_2017-1}. This indicates that deviations from the original results stem from configuration details.
+
+\begin{table}[htbp]
 \centering
 \caption{Fooling rates for the ImageNet validation set.}
 \begin{tabular}{|l|l|l|l|l|l|}
@@ -175,11 +178,12 @@ The main diagonal therefore contains the self-fooling rates, i.e. the fooling ra
 %}
 . It gives the number of highest probability class boundaries in whose direction a perturbation is searched for. Computation time is highly sensitive to this parameter. Therefore, the number of tested classes has to be constrained for data sets containing many different classes.
 
-Figure~\ref{fig:UAPs} shows the perturbations generated. In their general structure and appearance, they are similar to the ones reported in~\cite{moosavi-dezfooli_universal_2017-1}. This indicates that the relevant deviations from the original results stem from configuration details such as the precise hyperparameter values chosen or the number of training epochs. We have tried to optimize these parameters {\bf oder auch andere? Hier auflisten} using grid searches, but the available compute resources have limited these efforts. In particular, it is possible that the {\bf stimmt das??} identification of the class boundaries used by DeepFool to construct the perturbation was not identical to the original publication, as the corresponding parameter {\sl num\_classes} was not given there. Checking all 1000 training boundaries of ImageNet proved infeasible. The strategy taken by the authors of~{\bf cite Dezfooli} might be the crucial missing information.
+In particular, the values of num\_classes\footnote{As given in their code at https://github.com/LTS4/}, the number of class boundaries searched, the number of training epochs and other minor parameters such as random initialisation values for the train-test split, etc. had to be taken from their provided code. We have tried to optimize these parameters using grid searches, but the available compute resources have limited these efforts. In particular, specific choices for the value of num\_classes proved difficult since checking all 1000 training boundaries of ImageNet was infeasible, but higher values improved the fooling performance. 
+The strategy taken by the authors of~{\bf cite Dezfooli} might be the crucial missing information.
  
 \begin{figure}[h]\label{fig:UAPs}
 	\centering
-		\includegraphics[width=1.00\textwidth]{images/own_perturbations.png}
+		\includegraphics[width=1.0\textwidth]{images/own_perturbations.png}
 	\label{fig_stoerwerte}
 	\caption{Visualisation of the generated perturbations. To visualise the perturbations we shifted them by $+\xi$ and extended them to the entire color space with a scalar multiplication.}
 \end{figure}
@@ -190,28 +194,28 @@ In this section we present our results for constructing UAPs that make use of tw
 \subsubsection{Alternated generation of perturbations and linear Interpolation between UAP on individual networks}
 Alg.~\ref{alg:3} has been applied to the set of classifiers $K=\left\{\text{Inception},\text{VGG-16}\right\}$, and the fooling rates are reported for these two networks and for ResNet-152. Table~\ref{tab:alternatedgeneration} has two sections. In the upper section, the network listed in the first column is used to generate the perturbation. The columns give the fooling rates on the network given in the column title.
 
-The second section reports results by applying the alternated generation of UAPs and the interpolation method given in eq.~(\ref{eq:interp}) using the value $\lambda=0.05$. Using this configuration, the fooling rates remained unchanged compared to the UAP generated only on VGG-16. 
+The second section reports results by applying the alternated generation of UAPs and the interpolation method given in eq.~(\ref{eq:interp}) using the value $\lambda=0.05$. Using this configuration, the fooling rates remained essentially unchanged compared to the UAP generated only on VGG-16. 
 This $\lambda$ value results in a perturbation that is similar to the VGG-16 perturbation, because only a small step is made in the direction of the Inception perturbation. Choosing higher $\lambda$ values resulted in perturbations with lower fooling rates for both models up to $\lambda=0.5$. From there on, the fooling rates on Inception improved again, but didn't exceed the fooling rates of a perturbation generated with UAP on Inception. 
 
-The alternated generation UAP generated a perturbation, that achieved slightly higher fooling rates on VGG-16 an ResNet-152 (2.1 and 3.2 absolute percentage point increase). For Inception, the perturbation achieved a fooling rate of 67.4\%. This is 14.6\% below the measured self fooling rate of Inception (81.9\%), but 7.4\% higher than the fooling rate achieved with a VGG-16 model. 
+The alternated generation UAP generated a perturbation that achieved slightly higher fooling rates on VGG-16 and ResNet-152 (2.1 and 3.2 absolute percentage point increase). For Inception, the perturbation achieved a fooling rate of 67.4\%. This is 14.6\% below the measured self fooling rate of Inception (81.9\%), but 7.4\% higher than the fooling rate achieved with a VGG-16 model. 
 
 {\bf Todo: Insgesamt besser!}
 
 
 
-\begin{table}[]\label{tab:alternatedgeneration}
+\begin{table}\label{tab:alternatedgeneration}
 \centering
 \caption{Comparison of the fooling rates by UAPs trained on individual networks (upper three rows) and of the alternated generation and linear interpolation procedures. Results are reported on the validation set, using the $l_\infty$-norm, $\xi=10$ and 20 UAP iterations. }
 
 \begin{tabular}{|l|l|l|l|l|l|}
 \hline
 
-											&	Inception	&	VGG-16		&	ResNet-152		\\ \hline
-Inception V1 UAP							&	\(81.9\%\)		&	\(15.9\%\)	&	\(15.9\%\)		\\
-VGG-16 UAP								&	\(59.9\%\)		&	\(58.7\%\)	&	\(38.0\%\)		\\
-ResNet-152 UAP &	\(54.6\%\)		&	\(31.4\%\)	&	\(73.4\%\)		\\ \hline
-alternated generation of UAPs&	\(67.3\%\)		&	\(60.6\%\)	&	\(41.2\%\)		\\
-linear interpolation (\(\lambda=0.05\))	&	\(59.9\%\)		&	\(58.7\%\)	&	\(38.0\%\)		\\
+											&	Inception	&	VGG-16		&	ResNet-152	& Average over all networks	\\ \hline
+Inception V1 UAP							&	\(81.9\%\)		&	\(15.9\%\)	&	\(15.9\%\)	&xxx	\\
+VGG-16 UAP								&	\(59.9\%\)		&	\(58.7\%\)	&	\(38.0\%\)	&xxx	\\
+ResNet-152 UAP &	\(54.6\%\)		&	\(31.4\%\)	&	\(73.4\%\)&xxx		\\ \hline
+alternated generation of UAPs&	\(67.3\%\)		&	\(60.6\%\)	&	\(41.2\%\)		&xxx\\
+linear interpolation (\(\lambda=0.05\))	&	\(59.9\%\)		&	\(58.7\%\)	&	\(38.0\%\)	&xxxx	\\
 %Finetuning									&	$59.9\%$		&	$57.9\%$	&	$38.6\%$		\\
 %modifiziertes DeepFool						&	$43.6\%$		&	$18.4\%$	&	$14.1\%$		\\
 \hline 
@@ -286,19 +290,19 @@ $\mathbf{r}_i \gets {\frac{\vert f'_{\hat{l}} \vert}{\Vert \mathbf{w'_{\hat{l}}}
 \SetAlgoLined
 {\bf Input}:Data set \(X\), classifier \(\hat{k}\), desired norm \(\left\|.\right\|_2\) of
 the perturbation \(\xi\), desired accuracy on perturbed samples \(\delta\).\;
-{\bf Output}: Universal perturbation vector \(\rb\)\;
-Initialize \(\Delta\rb \gets 0\)\;%, epoch\gets 1\;\;
+{\bf Output}: Universal perturbation vector \(\vb\)\;
+Initialize \(\Delta\vb \gets 0\)\;%, epoch\gets 1\;\;
 
 \While{\textup {Average fooling rate is too low}}{
 \ForEach{\(\mathrm{datapoint}\) \(\xb\in X\) }{ 
-\If{ \(\mathrm{with}\) \(\hat{k}(\xb)=\hat{k}(\xb+\rb)\)}{
+\If{ \(\mathrm{with}\) \(\hat{k}(\xb)=\hat{k}(\xb+\vb)\)}{
 	%\(\Delta \rb\gets \underset{r}{\arg \min}\left\|r\right\|_2~\mathrm{s.t.}~\hat{k}(\mathbf{x}+\rb+\Delta\rb)\neq\hat{k}(\mathbf{x})\)\;
-		\(\Delta \rb\gets\mathrm{DeepFool} (\xb+\rb,\hat{k})\gets \underset{\Delta\rb}{\arg \min}\left\|\Delta\rb\right\|_2~\mathrm{s.t.}~\hat{k}(\mathbf{x}+\rb+\Delta\rb)\neq\hat{k}(\mathbf{x}+\rb)\)\;
-	\(\rb\gets \rb+\Delta \rb\)\;  
-	\(\rb\gets \sqrt{\xi}\rb/\left\|\rb\right\|_2\)
+		\(\Delta \vb\gets\mathrm{DeepFool} (\xb+\vb,\hat{k})\gets \underset{\Delta\vb}{\arg \min}\left\|\Delta\vb\right\|_2~\mathrm{s.t.}~\hat{k}(\mathbf{x}+\vb+\Delta\vb)\neq\hat{k}(\mathbf{x}+\vb)\)\;
+	\(\vb\gets \vb+\Delta \vb\)\;  
+	\(\vb\gets \sqrt{\xi}\vb/\left\|\vb\right\|_2\)
 }  
  }}
-\Return \rb
+\Return \vb
  \caption{Computation of universal adversarial perturbations}
 \end{algorithm}
 \end{figure}
