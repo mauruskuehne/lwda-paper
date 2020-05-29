@@ -123,10 +123,10 @@ We have also investigated other, more involved approaches that led to unsatisfac
 
 %{\bf alter Satz, ev. nützlcihe idee?} We seek the perturbation which points in the averaged direction of the two single-network perturbations, with a strength proportional to the sums of the of the (absolute)  changes in activation when compared to the unperturbed image. {\bf seehr shaky!!! Besser motivieren!!}
 \begin{figure}
-\begin{algorithm}[H]\label{alg:1a}
+\begin{algorithm}[H]
 
 \SetAlgoLined
-{\bf Input}:Data set \(X\), a set of classifiers \(K\), desired norm \(\left\|.\right\|_p\) of
+{\bf Input}:Data set \(X\), set of classifiers \(K\), desired norm \(\left\|.\right\|_p\) of
 the perturbation \(\xi\)\\
 {\bf Output}: Universal perturbation vector \(\vb\)\\
 Initialize \(\vb \gets 0\)%, epoch\gets 1\;\;
@@ -137,42 +137,43 @@ Initialize \(\vb \gets 0\)%, epoch\gets 1\;\;
 	%\(\Delta \mathbf{r}_k\gets\mathrm{UAP} (k)\)\;
 	\If{ \(\hat{k}(\xb)=\hat{k}(\xb+\vb)\)}{
 	%\(\Delta \rb\gets \underset{r}{\arg \min}\left\|r\right\|_2~\mathrm{s.t.}~\hat{k}(\mathbf{x}+\rb+\Delta\rb)\neq\hat{k}(\mathbf{x})\)\;
-		\(\Delta \vb\gets\mathrm{DeepFool} (\xb+\vb,\hat{k})\)
-	\(\vb\gets \vb+\Delta \vb\)  
+		\(\Delta \vb\gets\mathrm{DeepFool} (\xb+\vb,\hat{k})\)\\
+	\(\vb\gets \vb+\Delta \vb\)  \\
 	\(\vb\gets \sqrt{\xi}\vb/\left\|\vb\right\|_p\)
 }  }
 } 
 Shuffle \(X\)
  }
 \Return \vb
- \caption{Computation of universal adversarial perturbations for multiple neural networks. }
+ \caption{Computation of universal adversarial perturbations for multiple neural networks, variant a. For each image, perturbation updates are computed for all classifiers. }\label{alg:1a}
 \end{algorithm}
 \end{figure}
 
 \begin{figure}
-\begin{algorithm}[H]\label{alg:3}
+\begin{algorithm}[H]
 
 \SetAlgoLined
-{\bf Input}:Data set \(X\), a set of classifiers \(K\), desired norm \(\left\|.\right\|_p\) of
+{\bf Input}:Data set \(X\), ordered set of classifiers \(K\), desired norm \(\left\|.\right\|_p\) of
 the perturbation \(\xi\)\\
 {\bf Output}: Universal perturbation vector \(\vb\)\\
 Initialize \(\vb \gets 0\)%, epoch\gets 1\;\;
 
 \While{\textup {Average fooling rate is too low}}{
 \ForEach{\(\mathrm{image~}\xb\in X\)  }{ 
-\ForEach{\(\hat{k}\in K\)  }{ 
+\(\hat{k}\gets \text{first element of}~K\)\\
+ \(K\gets\text{cyclic rotation of}~K \) \\
 	%\(\Delta \mathbf{r}_k\gets\mathrm{UAP} (k)\)\;
 	\If{ \(\hat{k}(\xb)=\hat{k}(\xb+\vb)\)}{
 	%\(\Delta \rb\gets \underset{r}{\arg \min}\left\|r\right\|_2~\mathrm{s.t.}~\hat{k}(\mathbf{x}+\rb+\Delta\rb)\neq\hat{k}(\mathbf{x})\)\;
-		\(\Delta \vb\gets\mathrm{DeepFool} (\xb+\vb,\hat{k})\)
-	\(\vb\gets \vb+\Delta \vb\)  
+		\(\Delta \vb\gets\mathrm{DeepFool} (\xb+\vb,\hat{k})\)\\
+	\(\vb\gets \vb+\Delta \vb\)  \\
 	\(\vb\gets \sqrt{\xi}\vb/\left\|\vb\right\|_p\)
-}  }
+}  
 } 
 Shuffle \(X\)
  }
 \Return \vb
- \caption{Computation of universal adversarial perturbations for multiple neural networks. }
+ \caption{Computation of universal adversarial perturbations for multiple neural networks, variant b. For each image, perturbation updates are computed for the next classifier in the classifier sequence. Then the sequence is cyclically rotated.}\label{alg:1b}
 \end{algorithm}
 \end{figure}
 
@@ -182,14 +183,13 @@ In this section we first discuss our attempt at the reproduction of the results 
 \subsection{Reproduction of the Original Results on Universal Adversarial Perturbations}
 Dezfooli et al. tested the DeepFool and Universal Adversarial Perturbations algorithms on 5 different neural networks~\cite{moosavidezfooli_universal_2017}. We choose networks similar to the ones used in~\cite{moosavidezfooli_universal_2017} that have publicly available pretrained weights. We compare the achieved fooling rates with those given in the original paper. Separate experiments have been performed by training individual UAPs on each of the networks, and subsequently measuring the fooling rates on all available networks. All perturbations were generated using the same random subset of 10'000 images of the ImageNet training set~\cite{imagenet_cvpr09}, and the fooling rates were measured on the ImageNet validation set (containing 50'000 images).
 
-\begin{figure}[h]\label{fig:UAPs}
+\begin{figure}[h]
 	\centering
 		\includegraphics[width=1.0\textwidth]{images/own_perturbations.png}
-	\label{fig_stoerwerte}
-	\caption{Visualisation of the generated perturbations. To visualise the perturbations we shifted them by $+\xi$ and extended them to the entire color space with a scalar multiplication.}
+	\caption{Visualisation of the generated perturbations. To visualise the perturbations we shifted them by $+\xi$ and extended them to the entire color space with a scalar multiplication.}\label{fig_stoerwerte}
 \end{figure}
 
-Figure~\ref{fig:UAPs} shows the perturbations generated. In their general structure and appearance, they are similar to the ones reported in~\cite{moosavidezfooli_universal_2017}. As the structures seen in Fig.~\ref{fig:UAPs} are quite particular, we believe that this indicates that deviations from the original results reported below probably stem from configuration details rather than a fundamental reproduction mistake.
+Figure~\ref{fig_stoerwerte} shows the perturbations generated. In their general structure and appearance, they are similar to the ones reported in~\cite{moosavidezfooli_universal_2017}. As the structures seen in Fig.~\ref{fig_stoerwerte} are quite particular, we believe that this indicates that deviations from the original results reported below probably stem from configuration details rather than a fundamental reproduction mistake.
 
 \begin{table}[htbp]
 \centering
@@ -221,11 +221,11 @@ Other minor parameters such as random initialisation values for the train-test s
 In this section we present our results for constructing UAPs that make use of two neural networks. We discuss results for the two approaches presented in Sec.~\ref{sec:MultUAP}, the alternated generation of perturbations and the linear interpolation between UAP on individual networks.
 %\subsubsection{Alternated generation of perturbations} WAS IST DAMIT?
 
-The alternated generation of perturbations proceeded as given in Alg.~\ref{alg:3} and has been applied to the set of classifiers \(K=\left\{\text{Inception},\text{VGG-16}\right\}\). The fooling rates are reported for these two networks and for ResNet-152. Tab.~\ref{tab:vergleich_comb} has two sections. In the upper section, the network listed in the first column is used to generate the perturbation. The columns give the fooling rates on the network given in the column title as well as their average as our measure for the generalizability of the UAPs. We include the original network in this average. 
+The alternated generation of perturbations proceeded as given in Alg.~\ref{alg:1a} and has been applied to the set of classifiers \(K=\left\{\text{Inception},\text{VGG-16}\right\}\). The fooling rates are reported for these two networks and for ResNet-152. Tab.~\ref{tab:vergleich_comb} has two sections. In the upper section, the network listed in the first column is used to generate the perturbation. The columns give the fooling rates on the network given in the column title as well as their average as our measure for the generalizability of the UAPs. We include the original network in this average. 
 
 The second section reports results by applying the alternated generation of UAPs and the interpolation method given in Eq.~(\ref{eq:interp}) using the value $\lambda=0.05$. 
 
-The alternated generation of a UAP on both networks (Alg.\ref{alg:3}) generated a perturbation that achieved slightly higher fooling rates on VGG-16 and ResNet-152 than a perturbation generated directly on VGG-16 (with an absolute increase of 2.1 and 3.2 percentage points, respectively). For Inception, the perturbation achieved a fooling rate of 67.4\%. This is 14.6\% below the measured self fooling rate of Inception (81.9\%), but 7.4\% higher than the fooling rate achieved with a VGG-16 model. 
+The alternated generation of a UAP on both networks (Alg.\ref{alg:1b}) generated a perturbation that achieved slightly higher fooling rates on VGG-16 and ResNet-152 than a perturbation generated directly on VGG-16 (with an absolute increase of 2.1 and 3.2 percentage points, respectively). For Inception, the perturbation achieved a fooling rate of 67.4\%. This is 14.6\% below the measured self fooling rate of Inception (81.9\%), but 7.4\% higher than the fooling rate achieved with a VGG-16 model. 
 
 
 Linear interpolation between the UAPs of VGG-16 and Inception V1 resulted in a best value of \(\lambda=0.05\) (see Eq.~(\ref{eq:interp})). Using this configuration, the fooling rates remained essentially unchanged compared to the UAP generated on VGG-16 only.
@@ -243,8 +243,8 @@ Inception V1 UAP							&	\(81.9\%\)		&	\(15.9\%\)	&	{\bf WF!}\(15.6\%\)	&37.8\%	
 VGG-16 UAP								&	\(60.0\%\)		&	\(58.7\%\)	&	\(38.0\%\)	&52.2\%	\\
 ResNet-152 UAP &	\(54.6\%\)		&	\(31.4\%\)	&	\(73.4\%\)&53.1\%		\\ \hline
 linear interpolation (\(\lambda=0.05\))	&	\(59.9\%\){\bf WF?}		&	\(58.7\%\)	&	\(38.0\%\)	&\%\\
-alternated generation of UAPs, variant a)&	\(63.3\%\)		&	\(55.0\%\)	&	\(36.3\%\)	& \(51.5\%\)	\\
-alternated generation of UAPs, variant b)&	\(67.3\%\)		&	\(60.6\%\)	&	\(41.2\%\)		&56.4\%\\
+alternated generation of UAPs, variant a&	\(63.3\%\)		&	\(55.0\%\)	&	\(36.3\%\)	& \(51.5\%\)	\\
+alternated generation of UAPs, variant b&	\(\mathbf{67.3}\%\)		&	\(\mathbf{60.6}\%\)	&	\(\mathbf{41.2}\%\)		&\(\mathbf{56.4}\)\%\\
 
 
 %Finetuning									&	$59.9\%$		&	$57.9\%$	&	$38.6\%$		\\
@@ -252,7 +252,7 @@ alternated generation of UAPs, variant b)&	\(67.3\%\)		&	\(60.6\%\)	&	\(41.2\%\)
 \hline 
 \end{tabular}
 
-\caption{Comparison of the fooling rates by UAPs trained on individual networks (upper three rows) and of the alternated generation  (Alg.~\ref{alg:3}) and linear interpolation (Eq.~(\ref{eq:interp})) procedures. Results are reported on the validation set, using the $l_\infty$-norm, $\xi=10$ and 20 UAP iterations.}\label{tab:vergleich_comb}
+\caption{Comparison of the fooling rates by UAPs trained on individual networks (upper three rows) and of combination methods for several networks (lower three rows). Best values are shown in bold. Among the alternated generation variants a (see Alg.~\ref{alg:1a}) and b (Alg.~\ref{alg:1b}) and the linear interpolation procedure (Eq.~(\ref{eq:interp})), variant b performs best w.r.t. the average fooling rate over all three networks. Results are reported on the validation set, using the $l_\infty$-norm, $\xi=10$ and 20 UAP iterations.}\label{tab:vergleich_comb}
 \end{table}
 
 
@@ -266,12 +266,12 @@ Interestingly, we achieved lower fooling rates than Moozavi-Dezfooli et.al, exce
 \subsubsection{Alternated generation of perturbations and linear Interpolation between UAP on individual networks}
 As the results in Tab.~\ref{tab:vergleich_comb} clearly show, a linear interpolation between two UAPs does not give good results. One obvious candidate interpretation is that since neural networks are highly non-linear functions, there is no reason to assume that combining their UAPs as a weighted average would produce good perturbations on both networks. Therefore, this attempt can at best serve as a crude baseline for comparison. 
 
-The results given by the alternated generation of perturbations (Alg.~\ref{alg:3}) are much better. The transferability of the perturbation from Inception to VGG-16 and vice versa are both better than using perturbations trained on any one of the two networks. Also the generalization to a third network (Resnet-152) is better than for both single-network UAPs. In the case of VGG-16, the UAP generated jointly on both networks even worked slightly better than the one trained on VGG-16 alone. The reason for this effect is not yet established. It may even be a statistical fluctuation as the effect of the particular ImageNet train-test-splitting has not been investigated due to constraints on computational resources. 
+The results given by the alternated generation of perturbations (Alg.~\ref{alg:1b}) are much better. The transferability of the perturbation from Inception to VGG-16 and vice versa are both better than using perturbations trained on any one of the two networks. Also the generalization to a third network (Resnet-152) is better than for both single-network UAPs. In the case of VGG-16, the UAP generated jointly on both networks even worked slightly better than the one trained on VGG-16 alone. The reason for this effect is not yet established. It may even be a statistical fluctuation as the effect of the particular ImageNet train-test-splitting has not been investigated due to constraints on computational resources. 
 
 \section{Conclusions}
 The results reported here on generalizing UAPs across several networks clearly have to be interpreted cautiously given the fact that even the reproduction of previously reported results has not been satisfactory. Establishing reproducibility standards for machine learning publications remains a crucial challenge that is hampering progress.
 
-With the above caution in mind, the results reported here suggest that finding universal adversarial perturbations that generalize across different convolutional neural networks is not a hopeless endeavour. Such a UAP is likely not a linear combination of UAPs of different networks, but must be constructed in a more subtle way. Our best approach, Alg.~\ref{alg:3}, most certainly is not optimal, but already shows some promising results: The generalizability of the fooling rates to ResNet-152 is enhanced by combining the UAPs of two networks, with respect to the UAPs generated on either one of the Inception or VGG-16 network.
+With the above caution in mind, the results reported here suggest that finding universal adversarial perturbations that generalize across different convolutional neural networks is not a hopeless endeavour. Such a UAP is likely not a linear combination of UAPs of different networks, but must be constructed in a more subtle way. Our best approach, Alg.~\ref{alg:1b}, most certainly is not optimal, but already shows some promising results: The generalizability of the fooling rates to ResNet-152 is enhanced by combining the UAPs of two networks, with respect to the UAPs generated on either one of the Inception or VGG-16 network.
 
 
 \bibliography{KuehneToedtli}
