@@ -12,6 +12,7 @@
 \usepackage{algorithmic}
 
 
+\hyphenation{per-tur-ba-tion ad-ver-sa-ri-al Com-pu-ter sev-er-al doc-u-ment-ed Image-Net}
 %\usepackage[backend=biber]{biblatex}
 %\usepackage[backend=biber,style=splncs04]{biblatex}  %backend=biber is 'better'  
 
@@ -86,13 +87,13 @@ This paper is organized as follows. After an introduction to DeepFool and the co
 \section{Methods}
 \subsection{General Setting}
 Given a classifier \(\hat{k}(x)=\sgn\left(f(x)\right)\) that is based on the sign of a classification function \(f:\mathbf{R}^n\rightarrow\mathbf{R}\), adversarial attacks seek a perturbation \(\vb\) such that \[\hat{k}(\xb+\vb)=\sgn\left(f(\xb+\vb)\right)\neq \sgn\left(f(\xb)\right)=\hat{k}(\xb).\] 
-In the following we briefly describe an adversarial perturbation generating method DeepFool and it's generalizations to UAPs in the multi-class classification setting. We then describe the two approaches analysed here to build UAPs from several networks. 
+In the following we briefly describe the adversarial perturbation generating method DeepFool and its generalizations to UAPs in the multi-class classification setting. We then describe the two approaches analysed here to build UAPs from several networks. 
 
 \subsection{DeepFool}
 In the UAP generation procedure DeepFool~\cite{moosavi-dezfooli_deepfool_2016}, the perturbation \(\mathbf{v}\) for an image \(\xn\) is defined to be the shortest vector (using the \(L_2\)-norm \(\left\|.\right\|\)) such that \(\xn+\mathbf{v}\) lies on a decision boundary. 
 If $f(\xb)$ is a linear function $f(\xb)=\mathbf{w} \xb+\mathbf{b}$, then \(\mathbf{v}\) can be shown to be \(\mathbf{v}=-\frac{f(\xn)}{\left\|\mathbf{w}\right\|_2^2}\mathbf{w}\). As \(f\) is nonlinear in general, the Taylor approximation \(f(\xb)=f(\xn)+\left(\nabla f(\mathbf{x})\right)^T\mathbf{v}\) is used to iteratively reach the decision boundary. 
 In the multi-class setting considered here, an additional step is required that identifies the closest decision boundary. 
-% where \(\xi\) is a hyperparameter.{\bf stimmt das??} For Details, see~\cite{DeepFool-Moosavi-Dezfooli15}. \\
+% where \(\xi\) is a hyperparameter.{\bf stimmt das??} For Details, see~\cite{moosavi-dezfooli_deepfool_2016}. \\
 
 \subsection{Multi-Classifier-Universal adversarial Perturbations with DeepFool}\label{sec:MultUAP}
 
@@ -126,7 +127,7 @@ We have also investigated other, more involved approaches that led to unsatisfac
 {\bf Input}:Data set \(X\), set of classifiers \(K\), desired norm \(\left\|.\right\|_p\) of
 the perturbation \(\xi\)\\
 {\bf Output}: Universal perturbation vector \(\vb\)\\
-Initialize \(\vb \gets 0\)%, epoch\gets 1\;\;
+Initialize \(\vb \gets 0\)\\%, epoch\gets 1\;\;
 \While{\textup {Average fooling rate is too low}}{
 \ForEach{\(\mathrm{image~}\xb\in X\)  }{ 
 \ForEach{\(\hat{k}\in K\)  }{ 
@@ -206,7 +207,7 @@ ResNet-152	& $42\%$	&	$55\%$		&	$31\%$		&	$33\%$		& 	$73\%$	\\
 
 Tab.~\ref{tbl_stoerraten_reprod_kreuz_linf} shows the achieved fooling rates for the tested models and should be compared with Tab.~2 of Moosavi-Dezfooli et al.~\cite{moosavidezfooli_universal_2017}. The first column indicates the network used to generate the UAP, while the first row gives the network on which the fooling rate is measured. The main diagonal therefore contains the self-fooling rates, i.e. the fooling rates achieved using the same model for generating the perturbation and measuring the fooling rate. 
 
-In reproducing these numbers, several insufficiently documented design choices had to be researched. For example, the original results are not stated for a given epoch, but using a stopping condition on the error rate. Values reported here are for epoch 20, at which point the mean value over the last 5 epochs typically varies by less than 0.005. Parameter values taken from and in the notation of~\cite{DeepFool-Moosavi-Dezfooli15} are \(p=\infty\) and \(\xi=10\). We used a maximum of 10 DeepFool update iterations. The overshoot parameter \(\eta=0.02\) was again taken from~\cite{DeepFool-Moosavi-Dezfooli15}. 
+To reproduce these numbers, several insufficiently documented design choices had to be researched. For example, the original results are not stated for a given epoch, but using a stopping condition on the error rate. Values reported here are for epoch 20, at which point the mean value over the last 5 epochs typically varies by less than 0.005. Parameter values taken from and in the notation of~\cite{moosavi-dezfooli_deepfool_2016} are \(p=\infty\) and \(\xi=10\). We used a maximum of 10 DeepFool update iterations. The overshoot parameter \(\eta=0.02\) was again taken from~\cite{moosavi-dezfooli_deepfool_2016}. 
 %\footnote{Called $\text{num_classes}$ in the code given in 
 %https://github.com/LTS4/universal.
 %}
@@ -251,7 +252,7 @@ alternated generation of UAPs, Alg.~\ref{alg:1b}&	\(\mathbf{67}\%\)		&	\(\mathbf
 For most models the fooling rates reported in the original paper could not be achieved. For VGG-F, VGG-16, VGG-19 and ResNet-152 our  self-fooling rates were between 4 and 24 absolute percentage points lower. For Inception we achieved a self-fooling rate 3 absolute percentage points higher than the one reported in the original paper. Clearly, this is not satisfactory and further research is needed to state the precise conditions under which a reliable reproduction of the reported fooling rates is possible. As a step in this direction we provide our code.\footnote{The code can be found here: https://github.com/mauruskuehne/lwda-paper}
 
 The non-diagonal values in Tab.~\ref{tbl_stoerraten_reprod_kreuz_linf} are large but typically significantly smaller than the diagonal values. They show a degree of transferability of UAPs generated with DeepFool to other models. Therefore, despite the reproducibility problems, these results broadly confirm that UAPs generated with DeepFool generalize to other network architectures. Nevertheless, it is clear that some aspects of UAPs are specific to a given neural network architecture. We discuss our results on finding a way to improve the non-diagonal elements (potentially at the cost of the diagonal ones) in the next section.
-Interestingly, we achieved lower fooling rates than Moozavi-Dezfooli et. al, except for the Inception network, for which we achieve 3 to 8 absolute percentage points higher fooling rates. This may indicate that the Inception network is more susceptible to these perturbations. Another possibility are the chosen hyperparameter values for DeepFool and UAP, which may be particularly well suited or optimized for this model. This in turn would explain the lower fooling rates achieved on other models.
+Interestingly, we achieved lower fooling rates than Moozavi-Dezfooli et al., except for the Inception network, for which we achieve 3 to 8 absolute percentage points higher fooling rates. This may indicate that the Inception network is more susceptible to these perturbations. Another possibility are the chosen hyperparameter values for DeepFool and UAP, which may be particularly well suited or optimized for this model. This in turn would explain the lower fooling rates achieved on other models.
 
 \subsubsection{Alternated generation of perturbations and linear Interpolation be\-tween UAPs on individual networks}
 As the results in Sec.~\ref{sec:EvaluationCombined} clearly show, a linear interpolation between two UAPs does not give good results. This suggests that a weighted average of the UAPs on individual networks does not produce good UAPs for both neural networks. Since neural networks are highly non-linear functions, there is no reason to assume that combining their UAPs as a weighted average would produce good perturbations on both networks. This is confirmed here and therefore this attempt can at best serve as a baseline for comparison. 
@@ -366,7 +367,7 @@ $\mathbf{r}_i \gets \frac{\bigl|f_{\hat{l}_{\!f}}' \bigr|+\left| g_{\hat{l}_{g}}
 \end{figure}
 
 \subsection{DeepFool and Universal Adversarial Perturbations}
-DeepFool~\cite{DeepFool-Moosavi-Dezfooli15} is an algorithm for constructing
+DeepFool~\cite{moosavi-dezfooli_deepfool_2016} is an algorithm for constructing
 - Beschreibung DeepFool
 - Beschreibung UAP-Verfahren: Wie werden adv. perturbations von DeepFool zu universal adv. pert. kombiniert
 - Beschreibung Kombinationsverfahren: Beschreibe Verfahren ohne modifiziertes DeepFool
