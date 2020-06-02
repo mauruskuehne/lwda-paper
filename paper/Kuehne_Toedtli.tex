@@ -220,7 +220,7 @@ In this section we present our results for constructing UAPs that make use of tw
 The alternated generation of perturbations as given in Alg.~\ref{alg:1a} has been applied to the set of classifiers \(K=\left\{\text{Inception},\text{VGG-16}\right\}\). In Tab.~\ref{tab:vergleich_comb} the fooling rates are reported for these two networks and for ResNet-152. The table has two sections. In the upper section, the network listed in the first column is used to generate the perturbation. The columns give the fooling rates on the network given in the column title as well as their average as our measure for the generalizability of the UAPs. We include the original network in this average. 
 The second section reports results by applying the alternated generation of UAPs and the interpolation method given in Eq.~(\ref{eq:interp}) using the value $\lambda=0.05$. 
 
-Alg.~\ref{alg:1a} achieved results similar to the ones of a perturbation generated on VGG-16 only. Alg.~\ref{alg:1b} achieved slightly higher fooling rates on VGG-16 and ResNet-152 than a perturbation generated directly on VGG-16 (with an absolute increase of 2 and 3 percentage points, respectively). For Inception, the perturbation achieved a fooling rate of 67\%. This is 15\% below the measured self fooling rate of Inception (82\%), but 7\% higher than the fooling rate achieved with a VGG-16 model. 
+Alg.~\ref{alg:1a} achieved results similar to the ones of a perturbation generated on VGG-16 only. Alg.~\ref{alg:1b} achieved slightly higher fooling rates on VGG-16 and ResNet-152 than a perturbation generated directly on VGG-16 (with an absolute increase of 2 and 3 percentage points, respectively). For Inception, the perturbation achieved a fooling rate of 67\%. This is 15\% below the measured self-fooling rate of Inception (82\%), but 7\% higher than the fooling rate achieved with a VGG-16 model. 
 
 For linear interpolation between the UAPs of VGG-16 and Inception V1, best results were achieved for \(\lambda=0.05\) (see Eq.~(\ref{eq:interp})). Using this configuration, the fooling rates remained essentially unchanged compared to the UAP generated on VGG-16 only.
 The small value \(\lambda=0.05\) results in a perturbation that is similar to the VGG-16 perturbation as the VGG-16 perturbation is weighted with \(1-\lambda=0.95\), while the Inception perturbation contributes only with a weight of 5\%. Choosing \(\lambda\in\left[0.1,0.15,\ldots,0.4\right]\) resulted in perturbations with lower fooling rates for both models with respect to the rates achieved by separately training UAPs on the two networks. For \(\lambda \in\left[0.4,1.0\right]\), the fooling rates for Inception improved again, but did not exceed the fooling rates of a UAP generated on Inception itself. The fooling rates on VGG-16 continued to deteriorate, stabilizing at a low fooling rate of \(\sim 15\%\) after \(\lambda\geq 0.65\).
@@ -233,16 +233,9 @@ The small value \(\lambda=0.05\) results in a perturbation that is similar to th
 Inception V1 UAP							&	\(82\%\)		&	\(16\%\)	&	\(16\%\)	&38\%	\\
 VGG-16 UAP								&	\(60\%\)		&	\(59\%\)	&	\(38\%\)	&52\%	\\
 ResNet-152 UAP &	\(55\%\)		&	\(31\%\)	&	\(73\%\)&53\%		\\ \hline
-<<<<<<< HEAD
-linear interpolation (\(\lambda=0.05\))	&	\(60\%\)		&	\(59\%\)	&	\(38\%\)	&\%\\
-alternated generation of UAPs, Alg.~\ref{alg:1a}&	\(63\%\)		&	\(55\%\)	&	\(36\%\)	& \(52\%\)	\\
+linear interpolation with \(\lambda=0.05\)	&	\(60\%\)		&	\(59\%\)	&	\(38\%\)	&52\%\\
+alternated generation of UAPs, Alg.~\ref{alg:1a}&	\(63\%\)		&	\(55\%\)	&	\(36\%\)	& \(51\%\)	\\
 alternated generation of UAPs, Alg.~\ref{alg:1b}&	\(\mathbf{67}\%\)		&	\(\mathbf{61}\%\)	&	\(\mathbf{41}\%\)		&\(\mathbf{56}\)\%\\
-=======
-linear interpolation (\(\lambda=0.05\))	&	\(60\%\)		&	\(59\%\)	&	\(38\%\)	&52\%\\
-alternated generation of UAPs, variant a&	\(63\%\)		&	\(55\%\)	&	\(36\%\)	& \(52\%\)	\\
-alternated generation of UAPs, variant b&	\(\mathbf{67}\%\)		&	\(\mathbf{61}\%\)	&	\(\mathbf{41}\%\)		&\(\mathbf{56}\)\%\\
->>>>>>> b4371bb873763bf819e432bd1495c5795bdce3c3
-
 
 %Finetuning									&	$59.9\%$		&	$57.9\%$	&	$38.6\%$		\\
 %modifiziertes DeepFool						&	$43.6\%$		&	$18.4\%$	&	$14.1\%$		\\
@@ -261,9 +254,11 @@ The non-diagonal values in Tab.~\ref{tbl_stoerraten_reprod_kreuz_linf} are large
 Interestingly, we achieved lower fooling rates than Moozavi-Dezfooli et. al, except for the Inception network, for which we achieve 3 to 8 absolute percentage points higher fooling rates. This may indicate that the Inception network is more susceptible to these perturbations. Another possibility are the chosen hyperparameter values for DeepFool and UAP, which may be particularly well suited or optimized for this model. This in turn would explain the lower fooling rates achieved on other models.
 
 \subsubsection{Alternated generation of perturbations and linear Interpolation be\-tween UAPs on individual networks}
-As the results in Sec.~\ref{sec:EvaluationCombined} clearly show, a linear interpolation between two UAPs does not give good results. This suggests that a weighted average of the UAPs on individual networks does not produce good UAPs of two neural networks. Since neural networks are highly non-linear functions, there is no reason to assume that combining their UAPs as a weighted average would produce good perturbations on both networks. This is confirmed here and therefore this attempt can at best serve as a crude baseline for comparison. 
+As the results in Sec.~\ref{sec:EvaluationCombined} clearly show, a linear interpolation between two UAPs does not give good results. This suggests that a weighted average of the UAPs on individual networks does not produce good UAPs for both neural networks. Since neural networks are highly non-linear functions, there is no reason to assume that combining their UAPs as a weighted average would produce good perturbations on both networks. This is confirmed here and therefore this attempt can at best serve as a baseline for comparison. 
 
-The results given by the alternated generation of perturbations (Alg.~\ref{alg:1b}) are much better. The transferability of the perturbation from Inception to VGG-16 and vice versa are both better than using perturbations trained on any one of the two networks. Furthermore, the generalization to a third network (Resnet-152) is better than for both single-network UAPs. In the case of VGG-16, the UAP generated jointly on both networks even worked slightly better than the one trained on VGG-16 alone. The reason for this effect is not yet established. It may even be a statistical fluctuation as the effect of the particular ImageNet train-test-splitting has not been investigated due to constraints on computational resources. 
+
+The results given by the alternated generation of perturbations (Alg.~\ref{alg:1b}) are much better (see Tab.~\ref{tab:vergleich_comb}). The fooling rate of the perturbation generated jointly on Inception and VGG-16 is better than the ones generated on any one of the 
+two networks. A perturbation generated on Inception achieves a fooling rate of 16\% on VGG-16, while a perturbation generated on VGG-16 achieves a fooling rate of 60\% on Inception. Both rates are lower than the ones of a perturbation generated jointly on Inception and VGG-16, achieving 67\% on Inception and 61\% on VGG-16. Furthermore, the generalization to a third network (Resnet-152) is better than for both single-network UAPs. In the case of VGG-16, the UAP generated jointly on both networks even worked slightly better than the one trained on VGG-16 alone. The reason for this effect is not yet established. It may even be a statistical fluctuation as the effect of the particular ImageNet train-test-splitting has not been investigated due to constraints on computational resources. 
 
 \section{Conclusions}
 The results reported here on generalizing UAPs across several networks clearly have to be interpreted cautiously given the fact that even the reproduction of previously reported results has not been satisfactory. Establishing reproducibility standards for machine learning publications remains a crucial challenge that is hampering progress.
