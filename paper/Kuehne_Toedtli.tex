@@ -179,9 +179,12 @@ In this section we first discuss our attempt at the reproduction of the results 
 \subsection{Reproduction of the Original Results on Universal Adversarial Perturbations}
 Dezfooli et al. tested the DeepFool and Universal Adversarial Perturbations algorithms on 5 different neural networks~\cite{moosavidezfooli_universal_2017}. We choose networks similar to the ones used in~\cite{moosavidezfooli_universal_2017} that have publicly available pretrained weights. We compare the achieved fooling rates with those given in the original paper. Separate experiments have been performed by training individual UAPs on each of the networks, and subsequently measuring the fooling rates on all available networks. All perturbations were generated using the same random subset of 10'000 images of the ImageNet training set~\cite{imagenet_cvpr09}, and the fooling rates were measured on the ImageNet validation set (containing 50'000 images).
 
-\begin{figure}
+\begin{figure}[ht]
 	\centering
-		\includegraphics[width=1.0\textwidth]{images/own_perturbations.png}
+		%\includegraphics[width=1.0\textwidth]{images/own_perturbations.png}
+		\fbox{\includegraphics[clip, trim=3.8cm 12.9cm 2.8cm 5.8cm, width=1.0\textwidth]{images/perturbationsFigure.pdf}}
+		%trim = left botm right top.
+		%\includegraphics[clip, trim=3.8cm 12.5cm 2.8cm 5.8cm, width=1.0\textwidth]{images/perturbationsFigure.pdf}
 	\caption{Visualisation of the generated perturbations. To visualise the perturbations we shifted them by $+\xi$ and extended them to the entire colour space with a scalar multiplication.}\label{fig_stoerwerte}
 \end{figure}
 
@@ -253,7 +256,7 @@ For most models the fooling rates reported in the original paper could not be ac
 The non-diagonal values in Tab.~\ref{tbl_stoerraten_reprod_kreuz_linf} are large but typically significantly smaller than the diagonal values. They show a degree of transferability of UAPs generated with DeepFool to other models. Therefore, despite the reproducibility problems, these results broadly confirm that UAPs generated with DeepFool generalise to other network architectures. Nevertheless, it is clear that some aspects of UAPs are specific to a given neural network architecture. We discuss our results on finding a way to improve the non-diagonal elements (potentially at the cost of the diagonal ones) in the next section.
 Interestingly, we achieved lower fooling rates than Moozavi-Dezfooli et al., except for the Inception network, for which we achieve 3 to 8 absolute percentage points higher fooling rates. This may indicate that the Inception network is more susceptible to these perturbations. Another possibility are the chosen hyperparameter values for DeepFool and UAP, which may be particularly well suited or optimized for this model. This in turn would explain the lower fooling rates achieved on other models.
 
-\subsubsection{Alternated generation of perturbations and linear Interpolation be\-tween UAPs on individual networks}
+\subsection{Alternated generation of perturbations and linear Interpolation be\-tween UAPs on individual networks}
 As the results in Sec.~\ref{sec:EvaluationCombined} clearly show, a linear interpolation between two UAPs does not give good results. This suggests that a weighted average of the UAPs on individual networks does not produce good UAPs for both neural networks. Since neural networks are highly non-linear functions, there is no reason to assume that combining their UAPs as a weighted average would produce good perturbations on both networks. This is confirmed here and therefore this attempt can at best serve as a baseline for comparison. 
 
 The results given by the alternated generation of perturbations (Alg.~\ref{alg:1b}) are much better (see Tab.~\ref{tab:vergleich_comb}). The fooling rate of the perturbation generated jointly on Inception and VGG-16 is better than the ones generated on any one of the 
