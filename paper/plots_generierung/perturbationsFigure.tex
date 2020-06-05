@@ -1,0 +1,22 @@
+\documentclass{minimal}
+\usepackage[pdf]{pstricks} 
+\usepackage{pst-plot} 
+\usepackage{graphicx}
+
+\begin{document}
+\begin{pspicture}(-0.25,-0.25)(8,8)
+\put(0,0){\includegraphics[width=4.5cm]{inception.pdf}}
+\put(5,0){\includegraphics[width=4.5cm]{vgg16.pdf}}
+\put(10,0){\includegraphics[width=4.5cm]{vgg19.pdf}}
+\put(7.5,-5.7){\includegraphics[width=4.5cm]{resnet.pdf}}
+\put(2.5,-5.7){\includegraphics[width=4.5cm]{vggf.pdf}}
+
+\put(2.25,-0.4){\makebox(0,0){\fontsize{14.4pt}{15.1pt}\selectfont Inception}}
+\put(7.25,-0.4){\makebox(0,0){\fontsize{14.4pt}{15.1pt}\selectfont VGG-16}}
+\put(12.25,-0.4){\makebox(0,0){\fontsize{14.4pt}{15.1pt}\selectfont VGG-19}}
+\put(4.75,-6.1){\makebox(0,0){\fontsize{14.4pt}{15.1pt}\selectfont VGG-F}}
+\put(9.75,-6.1){\makebox(0,0){\fontsize{14.4pt}{15.1pt}\selectfont ResNet-152}}
+  %\psaxes[dx=1,Dx=2]{->}(0,0)(8,8)
+\end{pspicture}
+
+\end{document}

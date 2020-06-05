@@ -63,7 +63,7 @@ Institut für Informations- und Prozessmanagement, FHS St. Gallen \\
 \maketitle              % typeset the header of the contribution
 %
 \begin{abstract}
-Universal adversarial perturbations (UAPs) are small perturbations imposed on images that are able to fool a single convolutional neural network image classifier. They have been shown to generalise well to other neural networks. Here, we report on our reproduction effort of the results given in a work by Moosavi-Dezfooli et al. and study two methods to construct UAPs for several neural networks. While the results are not strong enough to make general conclusions, they suggest that UAPs indeed profit from being constructed on several neural networks. Also, we show that a linear interpolation between two UAPs does not produce a viable UAP on both networks.
+Universal adversarial perturbations (UAPs) are small perturbations imposed on images that are able to fool a single convolutional neural network image classifier. They have been shown to generalise well to other neural networks. Here, we report on our reproduction effort of the results given in a work by Moosavi-Dezfooli et al. on UAPs and study two methods to construct UAPs for several neural networks. While the results are not strong enough to make general conclusions, they suggest that UAPs indeed profit from being constructed on several neural networks. Also, we show that a linear interpolation between two UAPs does not produce a viable UAP on both networks.
 %\cite{yu_generating_2018}
 \keywords{Adversarial Training\and Universal Adversarial Perturbation}
 \end{abstract}
@@ -89,15 +89,16 @@ Given a classifier \(\hat{k}(x)=\sgn\left(f(x)\right)\) that is based on the sig
 In the following we briefly describe the adversarial perturbation generating method DeepFool and its generalizations to UAPs in the multi-class classification setting. We then describe the two approaches analysed here to build UAPs from several networks. 
 
 \subsection{DeepFool}
-In the UAP generation procedure DeepFool~\cite{moosavi-dezfooli_deepfool_2016}, the perturbation \(\mathbf{v}\) for an image \(\xn\) is defined to be the shortest vector (using the \(L_2\)-norm \(\left\|.\right\|\)) such that \(\xn+\mathbf{v}\) lies on a decision boundary. 
-If $f(\xb)$ is a linear function $f(\xb)=\mathbf{w} \xb+\mathbf{b}$, then \(\mathbf{v}\) can be shown to be \(\mathbf{v}=-\frac{f(\xn)}{\left\|\mathbf{w}\right\|_2^2}\mathbf{w}\). As \(f\) is nonlinear in general, the Taylor approximation \(f(\xb)=f(\xn)+\left(\nabla f(\mathbf{x})\right)^T\mathbf{v}\) is used to iteratively reach the decision boundary. 
+%
+In the UAP generation procedure DeepFool~\cite{moosavi-dezfooli_deepfool_2016}, the perturbation \(\mathbf{v}\) for an image \(\xb\) is defined to be the shortest vector (using the \(L_p\)-norm \(\left\|.\right\|_p\)) such that \(\xn+\mathbf{v}\) lies on a decision boundary. 
+If $f(\xb)$ is a linear function $f(\xb)=\mathbf{w} \xb+\mathbf{b}$, then \(\mathbf{v}\) can be shown to be \(\mathbf{v}=-\frac{f(\xn)}{\left\|\mathbf{w}\right\|_p^2}\mathbf{w}\). As \(f\) is nonlinear in general, the Taylor approximation of the function $f$ around \(\mathbf{x}\), \(f(\mathbf{x}+\mathbf{v})=f(\mathbf{x})+\left(\nabla f(\mathbf{x})\right)^T\mathbf{v}\) is used to iteratively reach the decision boundary. 
 In the multi-class setting considered here, an additional step is required that identifies the closest decision boundary. 
 % where \(\xi\) is a hyperparameter.{\bf stimmt das??} For Details, see~\cite{moosavi-dezfooli_deepfool_2016}. \\
 
 \subsection{Multi-Classifier-Universal adversarial Perturbations with DeepFool}\label{sec:MultUAP}
 
 Perturbations for each image in a dataset \(X\) (such as those generated using DeepFool) can be combined to form universal adversarial perturbations for a single network~\cite{moosavidezfooli_universal_2017}. The procedure is given in Alg.~\ref{alg:1a}. Essentially, DeepFool perturbations of images that are not yet misclassified are added to obtain a universal perturbation. 
-Whenever the norm of the perturbation becomes large, a rescaling is applied. The perturbation is scaled back to satisfy a norm bound given by \(\left\|\mathbf{v}\right\|_2\leq\xi\) (that potentially undoes the successful perturbation of some images). For a small value of \(\xi\), this ensures that the perturbation remains largely invisible. For details, see~\cite{moosavidezfooli_universal_2017}. 
+Whenever the norm of the perturbation becomes large, a rescaling is applied. The perturbation is scaled back to satisfy a norm bound given by \(\left\|\mathbf{v}\right\|_p\leq\xi\) (that potentially undoes the successful perturbation of some images). For a small value of \(\xi\), this ensures that the perturbation remains largely invisible. For details, see~\cite{moosavidezfooli_universal_2017}. 
 
 Intriguingly, although the directions to the class boundaries vary for different training images, the resulting average over all image perturbations works well according to~\cite{moosavidezfooli_universal_2017}, even for other convolutional neural networks whose class boundaries might be expected to look rather different. 
 
@@ -184,7 +185,8 @@ Dezfooli et al. tested the DeepFool and Universal Adversarial Perturbations algo
 		%\includegraphics[width=1.0\textwidth]{images/own_perturbations.png}
 		%\fbox{\includegraphics[clip, trim=3.8cm 12.9cm 2.8cm 5.8cm, width=1.0\textwidth]{images/perturbationsFigure.pdf}}
 		%trim = left botm right top.
-	\includegraphics[clip, trim=3.8cm 12.9cm 2.8cm 5.8cm, width=1.0\textwidth]{images/perturbationsFigure.pdf}
+	%\includegraphics[clip, trim=3.8cm 12.9cm 2.8cm 5.8cm, width=1.0\textwidth]{images/perturbationsFigure.pdf}
+	\includegraphics[clip, trim=3.8cm 12.9cm 2.8cm 5.8cm, width=1.0\textwidth]{plots_generierung/perturbationsFigure.pdf}
 	\caption{Visualisation of the generated perturbations. To visualise the perturbations we shifted them by $+\xi$ and extended them to the entire colour space with a scalar multiplication.}\label{fig_stoerwerte}
 \end{figure}
 
