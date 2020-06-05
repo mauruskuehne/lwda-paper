@@ -91,7 +91,7 @@ In the following we briefly describe the adversarial perturbation generating met
 \subsection{DeepFool}
 %
 In the UAP generation procedure DeepFool~\cite{moosavi-dezfooli_deepfool_2016}, the perturbation \(\mathbf{v}\) for an image \(\xb\) is defined to be the shortest vector (using the \(L_p\)-norm \(\left\|.\right\|_p\)) such that \(\xb+\mathbf{v}\) lies on a decision boundary. 
-If $f(\xb)$ is a linear function $f(\xb)=\mathbf{w} \xb+\mathbf{b}$, then \(\mathbf{v}\) can be shown to be \(\mathbf{v}=-\frac{f(\xn)}{\left\|\mathbf{w}\right\|_p^2}\mathbf{w}\). As \(f\) is nonlinear in general, the Taylor approximation of the function $f$ around \(\mathbf{x}\), \(f(\mathbf{x}+\mathbf{v})=f(\mathbf{x})+\left(\nabla f(\mathbf{x})\right)^T\mathbf{v}\) is used to iteratively reach the decision boundary. 
+If $f(\xb)$ is a linear function $f(\xb)=\mathbf{w} \xb+\mathbf{b}$, then \(\mathbf{v}\) can be shown to be \(\mathbf{v}=-\frac{f(\xb)}{\left\|\mathbf{w}\right\|_p^2}\mathbf{w}\). As \(f\) is nonlinear in general, the Taylor approximation of the function $f$ around \(\mathbf{x}\), \(f(\mathbf{x}+\mathbf{v})=f(\mathbf{x})+\left(\nabla f(\mathbf{x})\right)^T\mathbf{v}\) is used to iteratively reach the decision boundary. 
 In the multi-class setting considered here, an additional step is required that identifies the closest decision boundary. 
 % where \(\xi\) is a hyperparameter.{\bf stimmt das??} For Details, see~\cite{moosavi-dezfooli_deepfool_2016}. \\
 
