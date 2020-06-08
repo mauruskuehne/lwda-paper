@@ -40,7 +40,7 @@
 \bibliographystyle{splncs04}
 \begin{document}
 %
-\title{Combining Universal Adversarial Perturbations on two Networks}%\thanks{Supported by organization x.}
+\title{Combining Universal Adversarial Perturbations}%\thanks{Supported by organization x.}
 %
 \titlerunning{Combining Universal Adversarial Perturbations}
 % If the paper title is too long for the running head, you can set
@@ -79,11 +79,12 @@ Given the practical potential and relevance of Deep Learning and the potential s
 the published results are often difficult to reproduce due to undocumented values for hyperparameters, software library versions etc.~\cite{Gundersen2018StateOT}. % {\bf ev. https://arxiv.org/vc/arxiv/papers/1909/1909.03032v1.pdf zitieren?}
 Also, only in rare cases is it clear how well the published results generalise beyond the very specific data set that was used but not provided to produce the published results. While not being able to reproduce the generation of adversarial examples may seem beneficial at first sight, it is clear that a thorough resolution of such security issues requires a well-stated problem, including readily available state-of-the-art algorithms for the production of adversarial examples. They form the basis of being able to test deep learning systems against such attacks. 
 
-The authors of~\cite{moosavidezfooli_universal_2017,moosavi-dezfooli_deepfool_2016} show good generalization results for UAPs generated with their procedure \emph{DeepFool}~\cite{moosavi-dezfooli_deepfool_2016} across different deep learning architectures. We report on our reproduction effort, provide our code and investigate whether modifications of their UAP algorithm are able to improve the generalization capability of UAPs by using modifications of the UAP generation algorithm that take into account several networks at the same time. Specifically, we ask whether incorporating information from a second neural network architecture improves the fooling rate of UAPs on a third neural network. We investigate three combination procedures and compare them with the original adversarial attack procedure.
+The authors of~\cite{moosavidezfooli_universal_2017,moosavi-dezfooli_deepfool_2016} show good generalization results for UAPs generated with their procedure \emph{DeepFool}~\cite{moosavi-dezfooli_deepfool_2016} across different deep learning architectures. 
+In this paper, we report on our effort to reproduce their results, provide our code and investigate whether modifications of their UAP algorithm are able to improve the generalization capability of UAPs by using modifications of the UAP generation algorithm that take into account several networks at the same time. Specifically, we ask whether incorporating information from a second neural network architecture improves the fooling rate of UAPs on a third neural network. We investigate three combination procedures and compare them with the original adversarial attack procedure.
 
-This paper is organized as follows. After an introduction to DeepFool and the construction of UAPs, we describe our reproduction effort of the original work of Moozavi-Dezfooli et al.~\cite{moosavidezfooli_universal_2017}. We then present several modifications of their UAP generation algorithm to construct UAPs that are optimized on two networks. We present our results that compare these variants to the original UAP generation algorithm of Moozavi-Dezfooli et al. We conclude with a discussion of these results.
+This paper is organized as follows. In chapter~\ref{sec:methods} we review the basic methods to generate adversarial and universal adversarial perturbations as introduced by Moozavi-Dezfooli et al.~\cite{moosavidezfooli_universal_2017}. We then present three modifications of their UAP generation algorithm to combine UAPs for several networks. In chapter~\ref{sec:Results} we first describe our reproduction effort of the original work of Moozavi-Dezfooli et al.~\cite{moosavidezfooli_universal_2017} to produce UAPs on a set of networks and provide our fooling rates. We then present our results on the three methods to produce UAPs for several networks. In chapter~\ref{sec:Discussion} we conclude with a discussion of these results.
 
-\section{Methods}
+\section{Methods}\label{sec:methods}
 \subsection{General Setting}
 Given a classifier \(\hat{k}(x)=\sgn\left(f(x)\right)\) that is based on the sign of a classification function \(f:\mathbf{R}^n\rightarrow\mathbf{R}\), adversarial attacks seek a perturbation \(\vb\) such that \[\hat{k}(\xb+\vb)=\sgn\left(f(\xb+\vb)\right)\neq \sgn\left(f(\xb)\right)=\hat{k}(\xb).\] 
 In the following we briefly describe the adversarial perturbation generating method DeepFool and its generalizations to UAPs in the multi-class classification setting. We then describe the two approaches analysed here to build UAPs from several networks. 
@@ -174,7 +175,7 @@ Shuffle \(X\)
 \end{algorithm}
 \end{figure}
 
-\section{Results}
+\section{Results}\ref{sec:Results}
 In this section we first discuss our attempt at the reproduction of the results in~\cite{moosavidezfooli_universal_2017} regarding the transferability of UAPs across neural network architectures. We then provide the results of our attempts at constructing UAPs based on two neural network architectures at the same time.
 
 \subsection{Reproduction of the Original Results on Universal Adversarial Perturbations}
@@ -251,7 +252,7 @@ alternated generation of UAPs, Alg.~\ref{alg:1b}&	\(\mathbf{67}\%\)		&	\(\mathbf
 \end{table}
 
 
-\section{Discussion}
+\section{Discussion}\label{sec:Discussion}
 \subsection{Reproduction of the Original Results on Universal Adversarial Perturbations}
 For most models the fooling rates reported in the original paper could not be achieved. For VGG-F, VGG-16, VGG-19 and ResNet-152 our  self-fooling rates were between 4 and 24 absolute percentage points lower. For Inception we achieved a self-fooling rate 3 absolute percentage points higher than the one reported in the original paper. Clearly, this is not satisfactory and further research is needed to state the precise conditions under which a reliable reproduction of the reported fooling rates is possible. As a step in this direction we provide our code.\footnote{The code can be found here: https://github.com/mauruskuehne/lwda-paper}
 
