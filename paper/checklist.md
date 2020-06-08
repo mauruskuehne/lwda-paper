@@ -2,7 +2,8 @@ The Machine Learning Reproducibility Checklist (v2.0, Apr.7 2020)
 For all models and algorithms presented, check if you include: 
 - A clear description of the mathematical setting, algorithm, and/or model. 
 - A clear explanation of any assumptions. 
-- An analysis of the complexity (time, space, sample size) of any algorithm. For any theoretical claim, check if you include: 
+- An analysis of the complexity (time, space, sample size) of any algorithm. 
+For any theoretical claim, check if you include: 
 - A clear statement of the claim. 
 - A complete proof of the claim. 
 For all datasets used, check if you include: 
