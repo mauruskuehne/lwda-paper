@@ -13,7 +13,8 @@ For all datasets used, check if you include:
 - [ ] The details of train / validation / test splits. 
 - [ ] An explanation of any data that were excluded, and all pre-processing step. 
 - [ ] A link to a downloadable version of the dataset or simulation environment. 
-- [x] ~For new data collected, a complete description of the data collection process, such as instructions to annotators and methods for quality control. ~ (keine neuen Daten gesammelt)
+- [x] ~~For new data collected, a complete description of the data collection process, such as instructions to annotators and methods for quality control. 
+(keine neuen Daten gesammelt)
 
 For all shared code related to this work, check if you include: 
 - [ ] Specification of dependencies. 
