@@ -75,7 +75,7 @@ The discovery of Szegedy et al.~\cite{Szegedy_2014} that several machine learnin
 
 These results suggest that neural networks partly share a common structure that can be exploited by universal adversarial perturbations (UAPs), while yet other aspects are different. By building UAPs that are viable on several networks, a common weakness of those networks is identified. This in turn helps in building more robust networks, for example again by adversarial training. In this context, we ask whether combining two neural networks in generating adversarial perturbations can improve the transferability of UAPs to new convolutional neural networks. We observe that in the approach by Moosavi-Deezfooli et al., implementing such a combination is particularly simple. We then provide results on some of the most straight-forward combination variants.
 
-Given the practical potential and relevance of Deep Learning and the potential security threats of adversarial perturbations, finding a robust resolution is important and urgent. However, research into the topic is hampered by the \emph{reproducibility crisis} in machine learning~\cite{raff2020quantifying}. A lot of research results, including on adversarial attacks, remain poorly documented in publications. While the methods described may be general enough to be useful for many similar applications, the published results are often difficult to reproduce due to undocumented values for hyperparameters, software library versions etc.~\cite{Gundersen2018StateOT}. % {\bf ev. https://arxiv.org/vc/arxiv/papers/1909/1909.03032v1.pdf zitieren?}
+Given the practical potential and relevance of Deep Learning and the potential security threats of adversarial perturbations, finding a robust resolution is important and urgent. However, research into the topic is hampered by the \emph{reproducibility crisis} in machine learning~\cite{raff2020quantifying}. A lot of research results, including on adversarial attacks, remain poorly documented in publications. While the methods described may be general enough to be useful for many similar applications, the published results are often difficult to reproduce due to undocumented values for hyperparameters, software library versions etc.~\cite{Gundersen2018StateOT}. 
 Also, only in rare cases is it clear how well the published results generalise beyond the very specific data set that was used but not provided to produce the published results. While not being able to reproduce the generation of adversarial examples may seem beneficial at first sight, it is clear that a thorough resolution of such security issues requires a well-stated problem, including readily available state-of-the-art algorithms for the production of adversarial examples. They form the basis of being able to test deep learning systems against such attacks. 
 As a step towards addressing these challenges, we endorse the NeurIPS-2019 code submission policy by providing our code and including their reproducibility checklist.
 
@@ -95,11 +95,10 @@ Given a classifier \(\hat{k}(x)=\sgn\left(f(x)\right)\) that is based on the sig
 In the following we briefly describe the adversarial perturbation generating method DeepFool and its generalisations to UAPs in the multi-class classification setting. We then describe the two approaches analysed here to build UAPs from several networks. 
 
 \subsection{DeepFool}
-%
+
 In the UAP generation procedure DeepFool~\cite{moosavi-dezfooli_deepfool_2016}, the perturbation \(\mathbf{v}\) for an image \(\xb\) is defined to be the shortest vector (using the \(L_p\)-norm \(\left\|.\right\|_p\)) such that \(\xb+\mathbf{v}\) lies on a decision boundary. 
 If $f(\xb)$ is a linear function $f(\xb)=\mathbf{w} \xb+\mathbf{b}$, then \(\mathbf{v}\) can be shown to be \(\mathbf{v}=-\frac{f(\xb)}{\left\|\mathbf{w}\right\|_p^2}\mathbf{w}\). As \(f\) is nonlinear in general, the Taylor approximation of the function $f$ around \(\mathbf{x}\), \(f(\mathbf{x}+\mathbf{v})=f(\mathbf{x})+\left(\nabla f(\mathbf{x})\right)^T\mathbf{v}\) is used to iteratively reach the decision boundary. 
 In the multi-class setting considered here, an additional step is required that identifies the closest decision boundary. 
-% where \(\xi\) is a hyperparameter.{\bf stimmt das??} For Details, see~\cite{moosavi-dezfooli_deepfool_2016}. \\
 
 \subsection{Multi-Classifier-Universal adversarial Perturbations with DeepFool}\label{sec:MultUAP}
 
@@ -184,7 +183,7 @@ Wo choose the same networks as the ones used in~\cite{moosavidezfooli_universal_
 
 \begin{figure}[ht]
 	\centering
-	\includegraphics[clip, trim=3.8cm 12.9cm 2.8cm 5.8cm, width=1.0\textwidth]{plots_generierung/perturbationsFigure.pdf}
+	\includegraphics[clip, trim=3.8cm 12.8cm 2.8cm 5.8cm, width=1.0\textwidth]{plots_generierung/perturbationsFigure.pdf}
 	\caption{Visualisation of the generated perturbations. To visualise the perturbations we shifted them by $+\xi$ and extended them to the entire colour space with a scalar multiplication.}\label{fig_stoerwerte}
 \end{figure}
 
@@ -210,9 +209,7 @@ ResNet-152	& $42\%$	&	$55\%$		&	$31\%$		&	$33\%$		& 	$73\%$	\\
 Tab.~\ref{tbl_stoerraten_reprod_kreuz_linf} shows the achieved fooling rates for the tested models and should be compared with Tab.~2 of Moosavi-Dezfooli et al.~\cite{moosavidezfooli_universal_2017}. The first column indicates the network used to generate the UAP, while the first row gives the network on which the fooling rate is measured. The main diagonal therefore contains the self-fooling rates, i.e. the fooling rates achieved using the same model for generating the perturbation and measuring the fooling rate. 
 
 To reproduce these numbers, several insufficiently documented design choices had to be researched. For example, the original results are not stated for a given epoch, but using a stopping condition on the error rate. Values reported here are for epoch 20, at which point the mean value over the last 5 epochs typically varies by less than 0.005. Parameter values taken from and in the notation of~\cite{moosavi-dezfooli_deepfool_2016} are \(p=\infty\) and \(\xi=10\). We used a maximum of 10 DeepFool update iterations. The overshoot parameter \(\eta=0.02\) was again taken from~\cite{moosavi-dezfooli_deepfool_2016}. 
-%\footnote{Called $\text{num_classes}$ in the code given in 
-%https://github.com/LTS4/universal.
-%}
+
 Another important parameter is the number of class boundaries, called num\_classes\footnote{As given in the code at https://github.com/LTS4/}. It gives the number of class boundaries in whose direction a perturbation is searched for. Computation time is highly sensitive to this parameter, and checking all 1000 training boundaries of ImageNet was infeasible. Higher values generally improve the fooling performance, though exceptions are observed. 
 Other minor parameters such as random initialisation values for the train-test split, etc. were taken from the provided code. We have tried to optimise these parameters using grid searches, but the available computing resources have limited these efforts. 
 
@@ -220,7 +217,6 @@ As part of this contribution we provide our code for the above reproduction effo
 
 \subsection{Evaluation of Approaches to Construct Universal Adversarial Perturbations for Multiple Neural Networks}\label{sec:EvaluationCombined}
 In this section we present our results for constructing UAPs that make use of two neural networks. We discuss results for the two approaches presented in Sec.~\ref{sec:MultUAP}, the alternated generation of perturbations and the linear interpolation between UAP on individual networks.
-%\subsubsection{Alternated generation of perturbations} WAS IST DAMIT?
 
 The alternated generation of perturbations as given in Alg.~\ref{alg:1a} has been applied to the set of classifiers \(K=\left\{\text{Inception},\text{VGG-16}\right\}\). In Tab.~\ref{tab:vergleich_comb} the fooling rates are reported for these two networks and for ResNet-152. The table has two sections. In the upper section, the network listed in the first column is used to generate the perturbation. The columns give the fooling rates on the network given in the column title as well as their average as our measure for the generalisability of the UAPs. We include the original network in this average. 
 The second section reports results by applying the alternated generation of UAPs and the interpolation method given in Eq.~(\ref{eq:interp}) using the value $\lambda=0.05$. 
@@ -241,9 +237,6 @@ ResNet-152 UAP &	\(55\%\)		&	\(31\%\)	&	\(73\%\)&53\%		\\ \hline
 linear interpolation with \(\lambda=0.05\)	&	\(60\%\)		&	\(59\%\)	&	\(38\%\)	&52\%\\
 alternated generation of UAPs, Alg.~\ref{alg:1a}&	\(63\%\)		&	\(55\%\)	&	\(36\%\)	& \(51\%\)	\\
 alternated generation of UAPs, Alg.~\ref{alg:1b}&	\(\mathbf{67}\%\)		&	\(\mathbf{61}\%\)	&	\(\mathbf{41}\%\)		&\(\mathbf{56}\)\%\\
-
-%Finetuning									&	$59.9\%$		&	$57.9\%$	&	$38.6\%$		\\
-%modifiziertes DeepFool						&	$43.6\%$		&	$18.4\%$	&	$14.1\%$		\\
 \hline 
 \end{tabular}
 
