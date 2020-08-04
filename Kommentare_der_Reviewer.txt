@@ -1,0 +1,117 @@
+Dear Beat,
+
+Thank you for your submission to the KDML track of LWDA 2020. We are happy to inform you that your work has been accepted at KDML! Since this year's KDML is virtual (online), you have to prepare a poster and a video of your talk. We will send around more instructions in the next days.
+
+If your submission is an original contribution (and not a resubmission of work accepted recently at another conference), you have to prepare a camera-ready version of your contribution by
+	August 9, 2020
+	
+You will find instructions on the camera-ready upload procedure and on the copyright transfer soon at the LWDA webpage. Attached are the results of the reviewing process. To foster a productive discussion, you are strongly advised to take them into account when preparing the camera-ready version of your paper.
+
+Looking forward to meet you at LWDA2020!
+Pascal Welke and Nico Piatkowski
+
+SUBMISSION: 3
+TITLE: Combining Universal Adversarial Perturbations
+
+
+----------------------- REVIEW 1 ---------------------
+SUBMISSION: 3
+TITLE: Combining Universal Adversarial Perturbations
+AUTHORS: Beat Tödtli and Maurus Kühne
+
+----------- Overall evaluation -----------
+SCORE: 2 (accept)
+----- TEXT:
+The authors describe an extension of Moosavi-Dezfooli's DeepFool technique in order to provide perturbations that are able to fool multiple networks. 
+
+The paper is well written and provides strong and useful experimental evidence for the authors' claims. The extensions to the base algorithm are somewhat straightforward but effective. The clarity of presentations is exceptional and provides a good read even for researchers that are new to the field.
+
+It would be a little easier to follow, if the "function" DeepFool in the pseudo-code would be explained in the caption. From context it became clear what is meant here, but people might only follow the figure, tables and algorithms to get a first grasp of the paper.
+
+Minor corrections:
+Punctuation: 
+no comma before but if it is not followed by a full sentence (several times) no comma before while when introducing a subclause after a main clause (several times)
+
+
+
+----------------------- REVIEW 2 ---------------------
+SUBMISSION: 3
+TITLE: Combining Universal Adversarial Perturbations
+AUTHORS: Beat Tödtli and Maurus Kühne
+
+----------- Overall evaluation -----------
+SCORE: 1 (weak accept)
+----- TEXT:
+This paper studies the effectiveness of "universal perturbations", i.e., minor modifications of images with the intention to induce misclassification across multiple images.
+The works features two results: (i) a replication of results of a previous research paper and (ii) a moderate extension towards eliciting such perturbations from multiple classifiers.
+
+The topic of the paper is clearly fitting to LWDA. The main approach of the paper is easy to understand but details are not always clear from the descriptions. 
+
+Some suggestions for improvement:
+* The contribution of the paper could be summarized more concisely and clearly in the introduction. For some time while reading, it was not clear to me where this is leading to.
+* The paper is not self-contained. At several occassions it just mentions "we do it the same way as [5]", but all the details (e.g., what is the classifier architecture) should be mentioned directly there.
+#Nicht durchführbar und nicht sinnvoll in solchen proceeding-papers? Lass uns nochmals durchgehen und schauen, ob wir infos geben können, die relevant sind. 
+* 3.1. reads like a general setup beyond image classification. I was wondering if this is intended.
+#guter Punkt! Wir müssen nicht auf das allgemeine Setup eingehen, obwohl das möglich wäre: given a classifier k -> given an image classifier k
+
+* In 3.2., the image is represented as a vector. It should be clarified how an image is exactly represented there. A typical image input could also be a tensor, or a vector could also come from an image embedding.
+* Consider calling it an "alternating generation" instead of "alternated"
+#ersetzt
+* In the algorithm description, it is unclear if the algorithm terminates at all. I think that is evident from the text later on that the loop just runs a fixed time, but from the algorithm itself that is not clear.
+#eingefügt- etwas eine lange While-Bedingung. Wie könnte man die kürzen?
+* In the evaluation, it is unclear which roll the norm plays. Are results robust for diverse values of the norm?
+#---------???----------- Discuss!
+* For the evaluation it would be interesting to see how the alternating approaches do for higher numbers of classifiers in a cross-validation setting (i.e., for unseen classifiers). From the results so far, it is very difficult to see if the results generalize at all. I understand that this computationally expensive. In that regard maybe also simpler (and faster) classifiers might be worth considering.
+#--> Follow-up paper.
+
+Overall, the work can be considered small, but potentially interesting contribution to LWDA. If space in the program is needed, it could also be cut, though.
+
+
+
+----------------------- REVIEW 3 ---------------------
+SUBMISSION: 3
+TITLE: Combining Universal Adversarial Perturbations
+AUTHORS: Beat Tödtli and Maurus Kühne
+
+----------- Overall evaluation -----------
+SCORE: -1 (weak reject)
+----- TEXT:
+The paper tries to (1) reproduce results on generating universal adversarial perturbations (UAP) in the image classification context. A UAP is a single perturbation that fools (=significantly hampers the performance of) a classifier when added to each training example. The paper also (2) proposes a method and experiments to find UAPs that fool multiple classifiers at once.
+
+(1) I agree with the authors that reproducibility is a key concern and that studies that aim to reproduce published results are needed. Reproduction studies ideally take whatever steps needed to reproduce (including communication with the authors) and identify reasons if reproduction fails, however. In this particular case, the authors could not reproduce. They honestly state that they did not have sufficient computational resources for a solid hyperparameter search and training procedure. It's remains completely unclear why the reproduction failed. For this reason, I find the results are not insightful. In fact, they are potentially misleading.
+
+(2) The proposed methods to fool multiple networks are straightforward (first thing that comes to mind), as the authors admit. The small experimental study shows that this somewhat works. That's a nice, small contribution. 
+Why one would be interested in such UAPs, however, remains mysterious to me.
+The paper provides no guidance and no concrete discussion.
+# Versuch der Klärung: "This in turn helps in building more robust networks, for example again by adversarial training. Even more generally, therefore, we view work on UAPs as one more way of (partly) approaching the bigger question of why neural networks with a large number of weights work at all (or when they don't)."
+
+Strong points:
+1. Aims to reproduce
+2. Considers multiple classifiers
+3. Simple methods
+4. Easy to read
+
+Weak points:
+1. Unclear why reproduction failed
+2. Motivation of multi-network UAPs unclear 3. Little discussion/experiments of alternative methods for generating UAPs (if any)
+
+Details:
+
+1. How would the perturbations of Tab 2 look when visualized as in Tab 1?
+
+2. The discussion about the reproducibility in the intro is not needed.
+# stark gekürzt
+
+3. The numbers from [5] should be reproduced in the paper to make it self-contained.
+
+4. What happened after [5,6]? Is there more recent work in this direction?
+
+5. Std errors for tab 1/2 are needed. E.g., how much does the randomness in perturbing the training data matter for Alg 1/Alg 2?
+
+6. Alg 1/2 are really the same algorithm. Only the set of classifiers used for each example is modified. Obvious choices are all (Alg 1), round robin (Alg 2), random (not used), or worst-performing (not used).
+
+7. Linear interpolation is not that bad, I think.
+
+8. Why not use multiple training datasets to find a UAP?
+#Vorschlag:
+#\footnote{Instead of combining UAPs from different networks, one might also consider combining UAPs of a network trained on different data sets, and study their differences. Here, however we consider neural networks trained for a specific task specified by a fixed training dataset (i.e. ImageNet).}
