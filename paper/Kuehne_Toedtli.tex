@@ -82,8 +82,6 @@ Specifically, we assess whether incorporating information from a second neural n
 
 Given the practical potential and relevance of Deep Learning and the potential security threats of adversarial perturbations, finding a robust resolution is important and urgent. However, research into the topic is hampered by the \emph{reproducibility crisis} in machine learning~\cite{raff2020quantifying}. Research results are often difficult to reproduce due to undocumented values for hyperparameters, software library versions etc.~\cite{Gundersen2018StateOT}. As this was also the case for our reproduction efforts of the UAP-results of Moosavi-Dezfooli et. al., we endorse the NeurIPS-2019 code submission policy by providing our code and including their reproducibility checklist.
 
-%%Given the practical potential and relevance of Deep Learning and the potential security threats of adversarial perturbations, finding a robust resolution is important and urgent. However, research into the topic is hampered by the \emph{reproducibility crisis} in machine learning~\cite{raff2020quantifying}. A lot of research results, including on adversarial attacks, remain poorly documented in publications. While the methods described may be general enough to be useful for many similar applications, the published results are often difficult to reproduce due to undocumented values for hyperparameters, software library versions etc.~\cite{Gundersen2018StateOT}. Also, only in rare cases is it clear how well the published results generalise beyond the very specific data set that was used but not provided to produce the published results. While not being able to reproduce the generation of adversarial examples may seem beneficial at first sight, it is clear that a thorough resolution of such security issues requires a well-stated problem, including readily available state-of-the-art algorithms for the production of adversarial examples. They form the basis of being able to test deep learning systems against such attacks. As a step towards addressing these challenges, we endorse the NeurIPS-2019 code submission policy by providing our code and including their reproducibility checklist.
-
 This paper is organised as follows. In Sec.~\ref{sec:relatedWork} we briefly review related work. In Sec.~\ref{sec:methods} we present the basic methods used to generate adversarial and universal adversarial perturbations as introduced by Moosavi-Dezfooli et al.~\cite{moosavidezfooli_universal_2017}. We then present two modifications of their UAP generation algorithm to combine UAPs for several networks and investigate linear interpolations between UAPs. In Sec.~\ref{sec:Results} we first describe our reproduction effort of the original work of Moosavi-Dezfooli et al.~\cite{moosavidezfooli_universal_2017} to produce UAPs on a set of networks and provide our fooling rates. We then present our results on the three methods to produce UAPs for several networks and show that the transferability to a third network is improved. In Sec.~\ref{sec:Discussion} we discuss these results and conclude with Sec.~\ref{sec:conclusion}.
 
 \section{Related Work}\label{sec:relatedWork}
@@ -186,7 +184,7 @@ In this section we first discuss our attempt at the reproduction of the results 
 Moosavi-Dezfooli et al. tested the DeepFool and Universal Adversarial Perturbations algorithms on 5 different neural networks~\cite{moosavidezfooli_universal_2017}. 
 We choose the same networks as the ones used in~\cite{moosavidezfooli_universal_2017} and use publicly available pretrained weights for all models, since the weights used in~\cite{moosavidezfooli_universal_2017} were not specified. We compare the achieved fooling rates with those given in the original paper. Separate experiments have been performed by training individual UAPs on each of the networks and subsequently measuring the fooling rates on all available networks. All perturbations were generated using the same random subset of 10'000 images of the ImageNet training set~\cite{imagenet_cvpr09}, and the fooling rates were measured on the ImageNet validation set (containing 50'000 images).
 
-\begin{figure}[ht]
+\begin{figure}[t]
 	\centering
 	\includegraphics[clip, trim=3.8cm 12.8cm 2.8cm 5.8cm, width=1.0\textwidth]{plots_generierung/perturbationsFigure.pdf}
 	\caption{Visualisation of the generated perturbations. To visualise the perturbations, we shifted them by $+\xi$ and extended them to the entire colour space with a scalar multiplication.}\label{fig_stoerwerte}
@@ -196,8 +194,7 @@ Fig.~\ref{fig_stoerwerte} shows the perturbations generated. In their general st
 
 \bgroup
 
-%\def\arraystretch{1.5}%  1 is the default, change whatever you need
-\setlength\tabcolsep{0.2cm}
+\setlength\tabcolsep{0.19cm}
 \begin{table}[htbp]
 \centering
 \caption{Fooling rates using the UAP method on the ImageNet validation set for several neural networks. Left values in bold are our reproduction results. The values to the right are the results reported in~\cite{moosavidezfooli_universal_2017}.}
