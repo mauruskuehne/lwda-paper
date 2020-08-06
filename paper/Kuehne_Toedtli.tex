@@ -12,7 +12,7 @@
 \usepackage{algorithmic}
 
 
-\hyphenation{per-tur-ba-tion ad-ver-sa-ri-al Com-pu-ter sev-er-al doc-u-ment-ed Image-Net}
+\hyphenation{per-tur-ba-tion ad-ver-sa-ri-al Com-pu-ter sev-er-al doc-u-ment-ed Image-Net clas-si-fi-ca-tion specif-i-cal-ly}
 %\usepackage[backend=biber]{biblatex}
 %\usepackage[backend=biber,style=splncs04]{biblatex}  %backend=biber is 'better'  
 
@@ -77,7 +77,7 @@ Moosavi-Dezfooli et al.~\cite{moosavidezfooli_universal_2017,moosavi-dezfooli_de
 These results suggest that neural networks and convolutional neural networks for image classification in particular partly share a common structure that can be exploited by universal adversarial perturbations (UAPs) while yet other aspects are different. Thus, understanding UAPs provides a window into the weaknesses of neural networks. By building UAPs that are viable on several networks, a common weakness of those networks is identified. This in turn helps in building more robust networks, for example again by adversarial training. Even more generally, therefore, we view work on UAPs as one more way of (partly) approaching the bigger question of why neural networks with a large number of weights work at all (or when they don't).
 
 In this context, we ask whether combining two neural networks in generating adversarial perturbations can improve the transferability of UAPs to new convolutional neural networks. We observe that in the approach by Moosavi-Dezfooli et al. \cite{moosavidezfooli_universal_2017,moosavi-dezfooli_deepfool_2016}, implementing such a combination is particularly simple. 
-We report on our effort to reproduce their results, provide our code and investigate whether modifications of their UAP algorithm are able to improve the generalisation capability of UAPs. To do so, we devise modifications of the UAP generation algorithm that take into account several networks at the same time\footnote{Instead of combining UAPs from different networks, UAPs of networks trained on different data domains can be combined, as done e.g. by Naseer et al.~\cite{NIPS2019_9450}.}
+We report on our effort to reproduce their results, provide our code and investigate whether modifications of their UAP algorithm are able to improve the generalisation capability of UAPs. To do so, we devise modifications of the UAP generation algorithm that take into account several networks at the same time\footnote{Instead of combining UAPs from different networks, UAPs of networks trained on different data domains can be combined, as done e.g. by Naseer et al.~\cite{NIPS2019_9450}.}.
 Specifically, we assess whether incorporating information from a second neural network architecture improves the fooling rate of UAPs on a third neural network. We investigate three combination procedures and compare them with the original adversarial attack procedure.
 
 Given the practical potential and relevance of Deep Learning and the potential security threats of adversarial perturbations, finding a robust resolution is important and urgent. However, research into the topic is hampered by the \emph{reproducibility crisis} in machine learning~\cite{raff2020quantifying}. Research results are often difficult to reproduce due to undocumented values for hyperparameters, software library versions etc.~\cite{Gundersen2018StateOT}. As this was also the case for our reproduction efforts of the UAP-results of Moosavi-Dezfooli et. al., we endorse the NeurIPS-2019 code submission policy by providing our code and including their reproducibility checklist.
@@ -234,7 +234,7 @@ For a linear interpolation between the UAPs of VGG-16 and Inception V1, the best
 The small value \(\lambda=0.05\) results in a perturbation that is similar to the VGG-16 perturbation as the VGG-16 perturbation is weighted with \(1-\lambda=0.95\) while the Inception perturbation contributes only with a weight of 5\%. Choosing \(\lambda\in\left[0.1,0.15,\ldots,0.4\right]\) resulted in perturbations with lower fooling rates for both models with respect to the rates achieved by separately training UAPs on the two networks. For \(\lambda \in\left[0.4,1.0\right]\), the fooling rates for Inception improved again but did not exceed the fooling rate of a UAP generated on Inception itself. The fooling rate on VGG-16 continued to deteriorate, stabilising at a low fooling rate of \(\sim 15\%\) after \(\lambda\geq 0.65\). This suggests that linear interpolation does not result in improved fooling rates.
 \begin{table}
 \centering
-
+\caption{Comparison of the fooling rates by UAPs trained on individual networks (upper three rows) and of combination methods for several networks (lower three rows). Best values are shown in bold. Among the alternating generation variants (Alg.~\ref{alg:1a} and Alg.~\ref{alg:1b}) and the linear interpolation procedure (Eq.~(\ref{eq:interp})), Alg.~\ref{alg:1b} performs best with respect to the average fooling rate over all three networks. Results are reported on the validation set, using the $l_\infty$-norm, $\xi=10$ and 20 UAP iterations.}\label{tab:vergleich_comb}
 \begin{tabular}{|c|c|c|c|c|c|}
 \hline
 											&	Inception	V1&	VGG-16		&	ResNet-152	& Average	\\ \hline
@@ -246,8 +246,6 @@ alternating generation of UAPs, Alg.~\ref{alg:1a}&	\(63\%\)		&	\(55\%\)	&	\(36\%
 alternating generation of UAPs, Alg.~\ref{alg:1b}&	\(\mathbf{67}\%\)		&	\(\mathbf{61}\%\)	&	\(\mathbf{41}\%\)		&\(\mathbf{56}\)\%\\
 \hline 
 \end{tabular}
-
-\caption{Comparison of the fooling rates by UAPs trained on individual networks (upper three rows) and of combination methods for several networks (lower three rows). Best values are shown in bold. Among the alternating generation variants (Alg.~\ref{alg:1a} and Alg.~\ref{alg:1b}) and the linear interpolation procedure (Eq.~(\ref{eq:interp})), Alg.~\ref{alg:1b} performs best with respect to the average fooling rate over all three networks. Results are reported on the validation set, using the $l_\infty$-norm, $\xi=10$ and 20 UAP iterations.}\label{tab:vergleich_comb}
 \end{table}
 
 
